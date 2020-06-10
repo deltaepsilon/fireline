@@ -1,0 +1,16 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us.gcr.io/$PROJECT_ID/cast:latest', '.']
+  - name: 'us.gcr.io/$PROJECT_ID/cast:latest'
+    dir: '/app'
+    args: ['yarn', 'ci:config']
+    env:
+      - 'SOME_KEY=$_SOME_KEY'
+  - name: 'us.gcr.io/$PROJECT_ID/cast:latest'
+    dir: '/app'
+    args: ['yarn', 'ci:deploy']
+    env:
+      - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
+      - 'FIREBASE_PROJECT=$_FIREBASE_PROJECT'
+images: ['us.gcr.io/$PROJECT_ID/cast:latest']
+timeout: 3600s

@@ -1,0 +1,20 @@
+{
+  "name": "@quiver/fireline",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/deltaepsilon/fireline.git",
+  "author": "Chris Esplin <chris@christopheresplin.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "docker-compose build",
+    "dev": "docker-compose build workspace && docker-compose run --service-ports --rm workspace zsh",
+    "connect": "docker exec -it workspace-fireline zsh",
+    "ci:login": "npx firebase login:ci --no-localhost",
+    "ci:build": "docker build --tag=fireline .",
+    "ci:interactive": "docker run -it --rm fireline sh",
+    "ci:pull": "docker pull us.gcr.io/fireline-2020/fireline:latest",
+    "ci:latest": "docker run -it --rm us.gcr.io/fireline-2020/fireline:latest sh",
+    "windows:watch": "powershell ./bin/watch.ps1"
+  }
+}

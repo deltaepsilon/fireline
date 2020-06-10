@@ -1,0 +1,19 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "workspace",
+  "workspaceFolder": "/app",
+  "extensions": [
+    "andrewleedham.vscode-css-modules",
+    "amatiasq.sort-imports",
+    "clinyong.vscode-css-modules",
+    "esbenp.prettier-vscode",
+    "bierner.lit-html",
+    "toba.vsfire"
+  ],
+  "search.exclude": {
+    "**/.next": true,
+    "**/.firebase": true,
+    "**/out": true
+  }
+}

@@ -1,0 +1,51 @@
+version: '3'
+services:
+  workspace:
+    container_name: workspace-fireline
+    build: ./dev/workspace
+    env_file: ./dev/workspace/env.list
+    ports:
+      - '3000:3000'
+      - '4000:4000'
+      - '5000:5000'
+      - '5001:5001'
+      - '5002:5002'
+      - '8080:8080'
+      - '9000:9000'
+      - '41000:41000'
+    volumes:
+      - './app:/app'
+      - './docs:/app/docs'
+  vault:
+    container_name: vault
+    build: ./dev/vault
+    env_file: ./dev/vault/env.list
+    volumes:
+      - ./dev/vault:/dev/vault
+      - ./app/vault:/app/vault
+    ports:
+      - 8200:8200
+    cap_add:
+      - IPC_LOCK
+  nginx:
+    container_name: nginx
+    image: nginx:1.15-alpine
+    depends_on:
+      - workspace
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./dev/nginx:/etc/nginx/conf.d
+      - ./dev/certbot/conf:/etc/letsencrypt
+      - ./dev/certbot/www:/var/www/certbot
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    depends_on:
+      - nginx
+    volumes:
+      - ./dev/certbot/conf:/etc/letsencrypt
+      - ./dev/certbot/www:/var/www/certbot
+      - ./dev/certbot/scripts:/scripts
+    entrypoint: sh /scripts/challenge.sh

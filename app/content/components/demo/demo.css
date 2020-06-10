@@ -1,0 +1,45 @@
+#demo {
+  width: 800px;
+  max-width: calc(100vw - 2em);
+  margin: 1em;
+}
+
+#demo p {
+  margin-bottom: 2em;
+}
+
+#demo table {
+  font-size: 0.5em;
+  margin: 3em 1em;
+}
+
+#demo table th {
+  min-width: 8em;
+}
+
+#demo form {
+  border: var(--border);
+  padding: 1em;
+}
+
+#demo form .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3em;
+}
+
+#demo form button {
+  background: black;
+  color: white;
+  border: none;
+  padding: 1em;
+  min-width: 6em;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-family: var(--font-book);
+}
+
+#demo form aside {
+  color: var(--color-warning);
+}
