@@ -25,7 +25,10 @@
     "webpack-cli": "^3.3.11"
   },
   "scripts": {
-    "build": "cd content && eleventy & yarn webpack",
+    "build": "cd content && yarn webpack && eleventy",
+    "ci:build": "yarn build",
+    "ci:config": "yarn deploy:functions:config",
+    "ci:deploy": "yarn deploy",
     "dev": "yarn start",
     "deploy": "firebase deploy --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "deploy:functions": "firebase deploy --only functions --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
