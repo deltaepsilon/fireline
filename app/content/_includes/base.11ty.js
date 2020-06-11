@@ -34,6 +34,12 @@ module.exports = function Base(params) {
       <footer>
         <ul>
           <li>
+            <a href="https://github.com/deltaepsilon/fireline">Github</a>
+          </li>
+          <li>
+            <a href="/pages/docs">Docs</a>
+          </li>
+          <li>
             <a href="/pages/demo">Demo</a>
           </li>
         </ul>

@@ -1,5 +1,5 @@
 {
-  "name": "@quiver/fireline",
+  "name": "@quiver/fireline-parent",
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/deltaepsilon/fireline.git",

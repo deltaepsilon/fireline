@@ -1,6 +1,8 @@
 # Fireline
 
-# Installation
+[Read the docs](https://fireline.chrisesplin.com/)
+
+# Local Development
 
 Front-end environments
 
@@ -11,7 +13,7 @@ Firebase Functions environments
 
 1. Edit `app/functions/environments/functions-env.test.js`
 
-## Make sure to base64 encode your service-acount.json file
+## Make sure to base64 encode your service-account.json file
 
 See [Export secret file to Gitlab pipeline](https://medium.com/@michalkalita/export-secret-file-to-gitlab-pipeline-75789eee35bd)
 

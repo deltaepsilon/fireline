@@ -19,6 +19,23 @@ module.exports = class Index {
       <p>
         Do you use Firebase?
       </p>
+      <p>
+        Fireline is the cheapest, easiest way to integrate Stripe with your SaaS app. Merchants of Record like Chargebee and Paddle are expensive overkill for fledgling businesses. Fireline is the cheap, easy integration that will get your MVP shipped with self-service payments!
+      </p>
+
+      <h3>Links</h3>
+      
+      <ul>
+        <li>
+          <a href="https://github.com/deltaepsilon/fireline">GitHub</a>
+        </li>
+        <li>
+          <a href="/pages/docs">Docs</a>
+        </li>
+        <li>
+          <a href="/pages/demo">Interactive Demo</a>
+        </li>
+      </ul>
 
       <h3>Callable Cloud Functions</h3>
 

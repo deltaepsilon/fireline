@@ -9,7 +9,14 @@ steps:
       - 'FIREBASE_PROJECT=$_FIREBASE_PROJECT'
       - 'GOOGLE_APPLICATION_CREDENTIALS=$_GOOGLE_APPLICATION_CREDENTIALS'
       - 'SERVICE_ACCOUNT_BASE64=$_SERVICE_ACCOUNT_BASE64'
-      - 'STRIPE_PK=$_STRIPE_PK'
+      - 'STRIPE_SIGNING_SECRET_PRODUCT=$_STRIPE_SIGNING_SECRET_PRODUCT'
+      - 'STRIPE_SK=$_STRIPE_SK'
+  - name: 'us.gcr.io/$PROJECT_ID/fireline:latest'
+    dir: '/app'
+    args: ['yarn', 'ci:test']
+    env:
+      - 'FIREBASE_TOKEN=$_FIREBASE_TOKEN'
+      - 'FIREBASE_PROJECT=$_FIREBASE_PROJECT'
       - 'STRIPE_SK=$_STRIPE_SK'
   - name: 'us.gcr.io/$PROJECT_ID/fireline:latest'
     dir: '/app'

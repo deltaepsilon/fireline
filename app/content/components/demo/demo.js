@@ -1,21 +1,45 @@
 import './demo.css';
 
-import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
-import React, { useCallback, useState } from 'react';
-
-import useStripePromise from '~/hooks/use-stripe-promise';
+import AuthenticationDetails from './authentication-details';
+import CardForm from './card-form';
+import PaymentMethods from './payment-methods';
+import React from 'react';
+import Subscriptions from './subscriptions';
 
 export default function Demo() {
-  const stripePromise = useStripePromise();
-
   return (
     <div id="demo">
-      <h3>Stripe card demo</h3>
+      <h3>Authentication Details</h3>
 
+      <AuthenticationDetails />
+
+      <h3>Add payment methods</h3>
+
+      <StripeTestCardsTable />
+
+      <CardForm />
+
+      <h3>Payment Methods</h3>
+
+      <PaymentMethods />
+
+      <h3>Subscriptions</h3>
+
+      <Subscriptions />
+    </div>
+  );
+}
+
+function StripeTestCardsTable() {
+  return (
+    <div>
       <p>
-        Use Stripe's <a href="https://stripe.com/docs/testing#cards">test cards</a>.
+        Use Stripe's{' '}
+        <a href="https://stripe.com/docs/testing#cards" target="_blank" rel="noopener noreferrer">
+          test cards
+        </a>
+        .
       </p>
-
       <table>
         <thead>
           <tr>
@@ -55,44 +79,6 @@ export default function Demo() {
           </tr>
         </tbody>
       </table>
-
-      <Elements stripe={stripePromise}>
-        <CheckoutForm />
-      </Elements>
     </div>
-  );
-}
-
-function CheckoutForm() {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [errorMessage, setErrorMessage] = useState('This is where your errors will show up');
-
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: elements.getElement(CardElement),
-      });
-
-      setErrorMessage(error);
-
-      console.log({ error, paymentMethod });
-    },
-    [setErrorMessage, stripe]
-  );
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <div className="row">
-        <button type="submit" disabled={!stripe}>
-          Add payment method
-        </button>
-        <aside>{errorMessage}</aside>
-      </div>
-    </form>
   );
 }

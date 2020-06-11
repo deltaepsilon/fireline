@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { loadStripe } from '@stripe/stripe-js';
-import useEnvironment from '~/hooks/use-environment';
+import useEnvironment from './use-environment';
 
 export default function useStripePromise() {
   const environment = useEnvironment();

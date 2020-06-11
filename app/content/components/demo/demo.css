@@ -4,6 +4,10 @@
   margin: 1em;
 }
 
+#demo h3 {
+  margin-top: 2em;
+}
+
 #demo p {
   margin-bottom: 2em;
 }
@@ -17,19 +21,7 @@
   min-width: 8em;
 }
 
-#demo form {
-  border: var(--border);
-  padding: 1em;
-}
-
-#demo form .row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 3em;
-}
-
-#demo form button {
+#demo button {
   background: black;
   color: white;
   border: none;
@@ -40,6 +32,51 @@
   font-family: var(--font-book);
 }
 
+#demo button[disabled] {
+  opacity: 0.25;
+}
+
+#demo button.small {
+  padding: 0.25em;
+  min-width: 6em;
+  font-size: 0.75rem;
+}
+
+#demo form {
+  position: relative;
+  border: var(--border);
+  padding: 1em;
+}
+
+#demo form[disabled]:before {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+
+  content: 'Sign in to continue';
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+#demo form .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3em;
+}
+
 #demo form aside {
   color: var(--color-warning);
+}
+
+#demo #payment-methods button {
+  position: relative;
+  top: -2px;
+  margin-left: 1em;
 }

@@ -1,5 +1,5 @@
 {
-  "name": "Fireline",
+  "name": "@quiver/fireline",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Chris Esplin <chris@christopheresplin.com>",
@@ -29,15 +29,22 @@
     "ci:build": "yarn build",
     "ci:config": "yarn deploy:functions:config",
     "ci:deploy": "yarn deploy",
+    "ci:test": "yarn test",
     "dev": "yarn start",
     "deploy": "firebase deploy --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "deploy:functions": "firebase deploy --only functions --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
-    "deploy:functions:config": "firebase functions:config:set stripe.pk=$STRIPE_PK stripe.sk=$STRIPE_SK --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
+    "deploy:functions:config": "firebase functions:config:set stripe.sk=$STRIPE_SK stripe.signing_secret.product=$STRIPE_SIGNING_SECRET_PRODUCT --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "deploy:hosting": "firebase deploy --only hosting --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "serve:hosting": "firebase serve --only hosting --port 4000 --host 0.0.0.0",
+    "serve:https": "nodemon functions/serve-https",
     "start": "cd content && eleventy --serve --port=4000 & yarn webpack:watch",
+    "test": "cd functions && yarn test",
+    "test:watch": "cd functions && yarn test:watch",
     "webpack": "webpack --config webpack.config.js --mode production",
     "webpack:watch": "yarn webpack --watch",
     "_": ""
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

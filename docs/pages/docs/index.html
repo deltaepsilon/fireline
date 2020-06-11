@@ -38,11 +38,28 @@
         }
       </style>
       <div class="page"><h1>DOCS</h1>
+<p>These docs are a work-in-progress. Complain in the <a href="https://github.com/deltaepsilon/fireline/issues">GitHub issues</a> if something is missing or the guides are unclear.</p>
+<h2>Cloud Functions for Firebase Installation</h2>
+<p>Set up Cloud Functions for Firebase in your project: <a href="https://firebase.google.com/docs/functions/get-started">get started guide</a></p>
+<p>Install Fireline in your <code>/functions</code> folder: <code>cd functions &amp;&amp; npm install @quiver/fireline</code></p>
+<p>Export the Fireline functions in <code>/functions/index.js</code> file: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js">example index.js</a></p>
+<h3>Client App Installation</h3>
+<p>Include the Firebase client SDKs in your client app: <a href="https://firebase.google.com/docs/web/setup">web setup docs</a></p>
+<p>See the demo code for a React implementation: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js">demo code</a></p>
+<h3>Security Rules</h3>
+<p>You'll need security rules for your <code>stripe-customers</code> collection.</p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/master/app/firestore.rules">firestore.rules example</a></p>
 </div>
     </div>
 
       <footer>
         <ul>
+          <li>
+            <a href="https://github.com/deltaepsilon/fireline">Github</a>
+          </li>
+          <li>
+            <a href="/pages/docs">Docs</a>
+          </li>
           <li>
             <a href="/pages/demo">Demo</a>
           </li>
