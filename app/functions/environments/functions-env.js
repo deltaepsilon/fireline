@@ -22,6 +22,7 @@ if (!config.stripe) {
   config.stripe = {
     sk: process.env.STRIPE_SK,
     signing_secret: {
+      price: process.env.STRIPE_SIGNING_SECRET_PRICE,
       product: process.env.STRIPE_SIGNING_SECRET_PRODUCT,
     },
   };

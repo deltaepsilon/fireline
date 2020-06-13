@@ -35,11 +35,17 @@ See [firestore.rules example](https://github.com/deltaepsilon/fireline/blob/mast
 
 Configure Stripe webhooks on your [webhooks dashboard](https://dashboard.stripe.com/test/webhooks).
 
-You'll need to configure webhooks for the Fireline webhooks that you choose to use.
+You'll need to configure webhooks for the Fireline webhooks, or your Firestore records will not be able to sync with Stripe.
 
-Here's an example for the `/webhooks/stripe/product` endpoint.
+You can send test webhook calls from the Stripe Webhooks dashboard.
 
-URL: https://us-central1-fireline-2020.cloudfunctions.net/webhooks/stripe/product
+You can also serve your webhooks locally using `yarn serve:https`. Note that you'll need to have external DNS, Nginx and Certbot configured if you want to test against your local dev environment.
+
+#### Required Webhooks
+
+---
+
+URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
 Description: Sync Stripe products with Firestore
 Event types:
 
@@ -47,10 +53,30 @@ Event types:
 - product.created
 - product.updated
 
-You'll need to add your new webhook's signing secret to your Cloud Functions config. It can be done like so:
+Cloud Functions signing secret command:
+`firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey`
 
-`firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhooksigningkey`
+---
 
-You can send test webhook calls from the Stripe Webhooks dashboard.
+URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
+Description: Sync Stripe prices with Firestore
+Event types:
 
-You can also serve your webhooks locally using `yarn serve:https`. Note that you'll need to have external DNS, Nginx and Certbot configured if you want to test against your local dev environment.
+- price.deleted
+- price.created
+- price.updated
+
+Cloud Functions signing secret command:
+`firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey`
+
+---
+
+URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
+Description: Sync Stripe subscriptions with Firestore
+Event types:
+
+- subscription.deleted
+- subscription.updated
+
+Cloud Functions signing secret command:
+`firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksubscriptionsigningkey`

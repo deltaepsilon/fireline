@@ -15,6 +15,9 @@ exports.removePaymentMethod = functions.https.onCall(RemovePaymentMethod(context
 const SavePaymentMethod = require('./src/https/on-call/save-payment-method.on-call.js');
 exports.savePaymentMethod = functions.https.onCall(SavePaymentMethod(context));
 
+const Subscribe = require('./src/https/on-call/subscribe.on-call.js');
+exports.subscribe = functions.https.onCall(Subscribe(context));
+
 // HTTP onRequest
 const Webhooks = require('./src/https/webhooks');
 exports.webhooks = functions.https.onRequest(Webhooks(context));

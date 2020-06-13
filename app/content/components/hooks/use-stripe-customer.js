@@ -21,7 +21,7 @@ export default function useStripeCustomer() {
         setCustomer(customer);
       });
     }
-  }, [currentUser]);
+  }, [currentUser, schema, setCustomer]);
 
   return customer;
 }

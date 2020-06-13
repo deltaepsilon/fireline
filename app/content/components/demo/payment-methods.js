@@ -6,11 +6,7 @@ import useStripePaymentMethods from '~/hooks/use-stripe-payment-methods';
 export default function PaymentMethods() {
   const paymentMethods = useStripePaymentMethods();
 
-  return !paymentMethods.length ? (
-    <EmptyState isLoading={paymentMethods.__isLoading} />
-  ) : (
-    <PaymentMethodsList paymentMethods={paymentMethods} />
-  );
+  return !paymentMethods.length ? null : <PaymentMethodsList paymentMethods={paymentMethods} />;
 }
 
 function PaymentMethodsList({ paymentMethods }) {
@@ -47,8 +43,4 @@ function PaymentMethodsList({ paymentMethods }) {
       })}
     </ul>
   );
-}
-
-function EmptyState({ isLoading }) {
-  return !isLoading && <p>Add payment methods above ☝</p>;
 }

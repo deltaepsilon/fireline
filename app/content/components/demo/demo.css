@@ -12,6 +12,10 @@
   margin-bottom: 2em;
 }
 
+#demo hr {
+  width: calc(100vw - 3em);
+}
+
 #demo table {
   font-size: 0.5em;
   margin: 3em 1em;
@@ -19,6 +23,13 @@
 
 #demo table th {
   min-width: 8em;
+}
+
+#demo select {
+  border: var(--border);
+  font-size: 0.75em;
+  padding: 0.5em 1em;
+  margin: 0.5em;
 }
 
 #demo button {
@@ -46,6 +57,7 @@
   position: relative;
   border: var(--border);
   padding: 1em;
+  width: 100%;
 }
 
 #demo form[disabled]:before {
@@ -79,4 +91,108 @@
   position: relative;
   top: -2px;
   margin-left: 1em;
+}
+
+#demo ul#subscriptions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+
+  width: calc(100vw - 2em);
+  list-style: none;
+  padding: 0;
+}
+
+#demo #subscriptions li {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  min-width: 250px;
+  border: var(--border);
+  padding: 1em;
+  margin: 1em;
+}
+
+#demo #subscriptions li[data-is-subscribed='true'] {
+  border-style: dashed;
+}
+
+#demo #subscriptions p {
+  font-size: 0.5em;
+  min-height: 3em;
+}
+
+#demo #subscriptions img {
+  width: 5em;
+}
+
+/* Modal */
+#modal > div {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+  background: white;
+  overflow: auto;
+}
+
+#modal section {
+  display: flex;
+  flex-direction: column;
+
+  width: var(--modal-width);
+  height: var(--modal-height);
+  max-width: var(--modal-max-width);
+  max-height: var(--modal-max-height);
+}
+
+#modal .header {
+  position: relative;
+}
+
+#modal h2 {
+  margin: 0.5rem;
+}
+
+#modal .close {
+  position: absolute;
+  top: -1px;
+  right: 0;
+}
+
+#modal .body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 1em;
+}
+
+#modal .body > * {
+  margin-bottom: 1rem;
+}
+
+#modal .buttons {
+  display: flex;
+  justify-content: space-around;
+
+  width: 100%;
+  margin-top: 1em;
+}
+
+#modal .body img {
+  max-width: 300px;
+  height: 300px;
 }

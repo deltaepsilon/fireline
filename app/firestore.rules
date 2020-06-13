@@ -9,5 +9,9 @@ service cloud.firestore {
       allow read: if isUser(uid);
       allow write: if false;
     }
+
+    match /stripe-products/{document=**} { 
+      allow read, write: if true;
+    }
   }
 }

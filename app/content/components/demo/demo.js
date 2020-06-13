@@ -5,27 +5,36 @@ import CardForm from './card-form';
 import PaymentMethods from './payment-methods';
 import React from 'react';
 import Subscriptions from './subscriptions';
+import useAuth from '~/hooks/use-auth';
 
 export default function Demo() {
+  const { currentUser } = useAuth();
+
   return (
     <div id="demo">
       <h3>Authentication Details</h3>
 
       <AuthenticationDetails />
 
-      <h3>Add payment methods</h3>
+      {currentUser && (
+        <div>
+          <h3>Subscriptions</h3>
 
-      <StripeTestCardsTable />
+          <Subscriptions />
 
-      <CardForm />
+          <hr />
 
-      <h3>Payment Methods</h3>
+          <h3>Manage payment methods</h3>
 
-      <PaymentMethods />
+          <StripeTestCardsTable />
 
-      <h3>Subscriptions</h3>
+          <CardForm />
 
-      <Subscriptions />
+          <PaymentMethods />
+        </div>
+      )}
+
+      <div id="modal" />
     </div>
   );
 }

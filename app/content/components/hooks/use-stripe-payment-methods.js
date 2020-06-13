@@ -21,7 +21,7 @@ export default function useStripePaymentMethods() {
         setPaymentMethods(paymentMethods);
       });
     }
-  }, [currentUser]);
+  }, [currentUser, schema, setPaymentMethods]);
 
   return paymentMethods;
 }

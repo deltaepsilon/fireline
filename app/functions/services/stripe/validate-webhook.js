@@ -1,5 +1,9 @@
 module.exports = function validateWebhook({ environment, stripe }) {
-  const secretsMap = { product: environment.STRIPE.SIGNING_SECRET.PRODUCT };
+  const secretsMap = {
+    price: environment.STRIPE.SIGNING_SECRET.PRICE,
+    product: environment.STRIPE.SIGNING_SECRET.PRODUCT,
+    subscription: environment.STRIPE.SIGNING_SECRET.SUBSCRIPTION,
+  };
 
   return (req, res, next) => {
     const lastPath = req.originalUrl.split('/').pop();

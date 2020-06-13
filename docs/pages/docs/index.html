@@ -43,12 +43,52 @@
 <p>Set up Cloud Functions for Firebase in your project: <a href="https://firebase.google.com/docs/functions/get-started">get started guide</a></p>
 <p>Install Fireline in your <code>/functions</code> folder: <code>cd functions &amp;&amp; npm install @quiver/fireline</code></p>
 <p>Export the Fireline functions in <code>/functions/index.js</code> file: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js">example index.js</a></p>
+<p>Set your Stripe secret key value in the Cloud Functions Config:</p>
+<p><code>firebase functions:config:set stripe.sk=sk_test_yoursecretkey</code></p>
 <h3>Client App Installation</h3>
 <p>Include the Firebase client SDKs in your client app: <a href="https://firebase.google.com/docs/web/setup">web setup docs</a></p>
 <p>See the demo code for a React implementation: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js">demo code</a></p>
 <h3>Security Rules</h3>
 <p>You'll need security rules for your <code>stripe-customers</code> collection.</p>
 <p>See <a href="https://github.com/deltaepsilon/fireline/blob/master/app/firestore.rules">firestore.rules example</a></p>
+<h3>Webhooks</h3>
+<p>Configure Stripe webhooks on your <a href="https://dashboard.stripe.com/test/webhooks">webhooks dashboard</a>.</p>
+<p>You'll need to configure webhooks for the Fireline webhooks, or your Firestore records will not be able to sync with Stripe.</p>
+<p>You can send test webhook calls from the Stripe Webhooks dashboard.</p>
+<p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to have external DNS, Nginx and Certbot configured if you want to test against your local dev environment.</p>
+<h4>Required Webhooks</h4>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
+Description: Sync Stripe products with Firestore
+Event types:</p>
+<ul>
+<li>product.deleted</li>
+<li>product.created</li>
+<li>product.updated</li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhooksigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
+Description: Sync Stripe prices with Firestore
+Event types:</p>
+<ul>
+<li>price.deleted</li>
+<li>price.created</li>
+<li>price.updated</li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhooksigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
+Description: Sync Stripe subscriptions with Firestore
+Event types:</p>
+<ul>
+<li>subscription.deleted</li>
+<li>subscription.updated</li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksigningkey</code></p>
 </div>
     </div>
 
