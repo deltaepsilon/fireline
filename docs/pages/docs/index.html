@@ -40,22 +40,40 @@
       <div class="page"><h1>DOCS</h1>
 <p>These docs are a work-in-progress. Complain in the <a href="https://github.com/deltaepsilon/fireline/issues">GitHub issues</a> if something is missing or the guides are unclear.</p>
 <h2>Cloud Functions for Firebase Installation</h2>
+<ol>
+<li>
 <p>Set up Cloud Functions for Firebase in your project: <a href="https://firebase.google.com/docs/functions/get-started">get started guide</a></p>
+</li>
+<li>
 <p>Install Fireline in your <code>/functions</code> folder: <code>cd functions &amp;&amp; npm install @quiver/fireline</code></p>
+</li>
+<li>
 <p>Export the Fireline functions in <code>/functions/index.js</code> file: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js">example index.js</a></p>
+</li>
+<li>
 <p>Set your Stripe secret key value in the Cloud Functions Config:</p>
+</li>
+</ol>
+<blockquote>
 <p><code>firebase functions:config:set stripe.sk=sk_test_yoursecretkey</code></p>
+</blockquote>
 <h3>Client App Installation</h3>
+<ol>
+<li>
 <p>Include the Firebase client SDKs in your client app: <a href="https://firebase.google.com/docs/web/setup">web setup docs</a></p>
+</li>
+<li>
 <p>See the demo code for a React implementation: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js">demo code</a></p>
+</li>
+</ol>
 <h3>Security Rules</h3>
 <p>You'll need security rules for your <code>stripe-customers</code> collection.</p>
-<p>See <a href="https://github.com/deltaepsilon/fireline/blob/master/app/firestore.rules">firestore.rules example</a></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/master/app/firestore.rules">app/firestore.rules</a></p>
 <h3>Webhooks</h3>
 <p>Configure Stripe webhooks on your <a href="https://dashboard.stripe.com/test/webhooks">webhooks dashboard</a>.</p>
-<p>You'll need to configure webhooks for the Fireline webhooks, or your Firestore records will not be able to sync with Stripe.</p>
-<p>You can send test webhook calls from the Stripe Webhooks dashboard.</p>
-<p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to have external DNS, Nginx and Certbot configured if you want to test against your local dev environment.</p>
+<p>You'll need to configure Stripe webhooks or your Firestore records will stay synced with Stripe.</p>
+<p>You can send test webhook calls from the Stripe Webhooks dashboard. But note that the <code>subscription.updated</code> and <code>subscription.deleted</code> webhooks won't work unless you first create a subscription with the correct <code>id</code>.</p>
+<p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to configure external DNS, Nginx and Certbot if you want to test against your local dev environment.</p>
 <h4>Required Webhooks</h4>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
@@ -67,7 +85,7 @@ Event types:</p>
 <li>product.updated</li>
 </ul>
 <p>Cloud Functions signing secret command:
-<code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhooksigningkey</code></p>
+<code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
 Description: Sync Stripe prices with Firestore
@@ -78,7 +96,7 @@ Event types:</p>
 <li>price.updated</li>
 </ul>
 <p>Cloud Functions signing secret command:
-<code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhooksigningkey</code></p>
+<code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
 Description: Sync Stripe subscriptions with Firestore
@@ -88,7 +106,11 @@ Event types:</p>
 <li>subscription.updated</li>
 </ul>
 <p>Cloud Functions signing secret command:
-<code>firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksigningkey</code></p>
+<code>firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksubscriptionsigningkey</code></p>
+<p><strong>WARNING!</strong></p>
+<p>Subscriptions are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really <code>currentUser.uid</code>)... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
+<p>The <code>subscription.deleted</code> Stripe webhook event can never work, because the webhook doesn't provide us with enough information to correctly nest the subscription under the correct customer. As a result, we create all subscriptions manually and let the webhooks handle <code>subscription.deleted</code> and <code>subscription.updated</code>.</p>
+<p>You'll have a tricky time testing these webhooks using Stripe's test webhook events, because the <code>id</code> of the test event doesn't already exist in Firestore. You can make the tests work by creating a subscription record in Firestore at <code>stripe-customers/some-fake-uid/subscriptions/subscription_00000000000000</code>. You can put any data in there that you want. The webhook test will overwrite it.</p>
 </div>
     </div>
 
