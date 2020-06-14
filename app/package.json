@@ -28,7 +28,7 @@
     "build": "cd content && yarn webpack && eleventy",
     "ci:build": "yarn build",
     "ci:config": "yarn deploy:functions:config",
-    "ci:deploy": "yarn deploy",
+    "ci:deploy": "yarn ci:service-account && yarn deploy",
     "ci:service-account": "echo $SERVICE_ACCOUNT_BASE64 | base64 -d > $GOOGLE_APPLICATION_CREDENTIALS",
     "ci:test": "yarn ci:service-account && yarn test",
     "dev": "yarn start",
