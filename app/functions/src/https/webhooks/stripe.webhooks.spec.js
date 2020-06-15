@@ -6,9 +6,61 @@ jest.mock('stripe', () => () => mockStripe);
 
 const context = require('../../../utilities/dev-context');
 const { v4: uuid } = require('uuid');
-const { Invoice, Price, Product, Subscription } = require('./stripe.webhooks');
+const { Customer, Invoice, Price, Product, Subscription } = require('./stripe.webhooks');
 
 describe('StripeWebhooks', () => {
+  describe('/customer', () => {
+    let event;
+    let userId;
+    let customerRef;
+    let deleteFn;
+    let setFn;
+    let sendStatusFn;
+    let func;
+
+    beforeEach(() => {
+      userId = uuid();
+      event = { type: uuid(), data: { object: { id: uuid(), metadata: { userId } } } };
+      deleteFn = jest.fn();
+      setFn = jest.fn();
+      sendStatusFn = jest.fn();
+      customerRef = { delete: deleteFn, set: setFn };
+      mockSchema = { getCustomerRef: jest.fn(() => customerRef) };
+
+      func = Customer(context);
+    });
+
+    describe('deleted', () => {
+      beforeEach(async () => {
+        event.type = 'customer.deleted';
+
+        await func({ body: event }, { sendStatus: sendStatusFn });
+      });
+
+      it('should delete the customer', () => {
+        expect(deleteFn).toHaveBeenCalled();
+      });
+    });
+
+    describe('NOT deleted', () => {
+      beforeEach(async () => {
+        await func({ body: event }, { sendStatus: sendStatusFn });
+      });
+
+      it('should call getCustomerRef with customerId', async () => {
+        expect(mockSchema.getCustomerRef).toHaveBeenCalledWith(userId);
+      });
+
+      it('should set the customer', () => {
+        expect(setFn).toHaveBeenCalledWith(event.data.object);
+      });
+
+      it('should return a 200', () => {
+        expect(sendStatusFn).toHaveBeenCalledWith(200);
+      });
+    });
+  });
+
   describe('/invoice', () => {
     let event;
     let subscriptionId;

@@ -14,6 +14,7 @@ module.exports = function StripeWebhooks(context) {
     res.send('health check');
   });
 
+  router.post('/customer', Customer(context));
   router.post('/invoice', Invoice(context));
   router.post('/price', Price(context));
   router.post('/product', Product(context));
@@ -21,6 +22,33 @@ module.exports = function StripeWebhooks(context) {
 
   return router;
 };
+
+module.exports.Customer = Customer;
+function Customer(context) {
+  const schema = Schema(context);
+
+  return async (req, res) => {
+    try {
+      const event = req.body;
+      const customer = event.data.object;
+      const userId = getUserIdFromMetadata(customer.metadata);
+      const isDeleted = getIsDeleted(event);
+      const customerRef = schema.getCustomerRef(userId);
+
+      if (isDeleted) {
+        await customerRef.delete();
+      } else {
+        await customerRef.set(customer);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error('error');
+
+      res.sendStatus(500);
+    }
+  };
+}
 
 module.exports.Invoice = Invoice;
 function Invoice(context) {
@@ -113,7 +141,7 @@ function Subscription(context) {
     try {
       const event = req.body;
       const subscription = event.data.object;
-      const userId = subscription.metadata.userId || TEST_USER_ID;
+      const userId = getUserIdFromMetadata(subscription.metadata);
       const isDeleted = getIsDeleted(event);
       const customerSubscriptionRef = schema.getCustomerSubscriptionRef(userId, subscription.id);
 
@@ -146,6 +174,10 @@ function getUserIdFromPath(ref) {
   }
 
   return result;
+}
+
+function getUserIdFromMetadata(metadata) {
+  return metadata.userId || TEST_USER_ID;
 }
 
 async function findSubscriptionDoc({ schema, subscriptionId }) {
