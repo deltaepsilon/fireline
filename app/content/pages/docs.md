@@ -27,7 +27,7 @@ These docs are a work-in-progress. Complain in the [GitHub issues](https://githu
 
 1. See the demo code for a React implementation: [demo code](https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js)
 
-1. If you'd like to use Fireline's React hooks, run `npm install @quiver/fireline` and check out it's exports: [/content/components/index.js](). These hooks are a bit too messy to document right now, so just open them up and see what they do. It's pretty straightforward. You likely have similar logic in your existing React app.
+1. If you'd like to use Fireline's React hooks, run `npm install @quiver/fireline` and check out it's exports: [/content/components/index.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/index.js). These hooks are a bit too messy to document right now, so open them up and see what they do. It's kind of straightforward? You likely have similar logic in your existing React app.
 
 ### Security Rules
 
