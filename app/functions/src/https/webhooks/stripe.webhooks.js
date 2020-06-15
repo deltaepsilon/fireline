@@ -16,6 +16,7 @@ module.exports = function StripeWebhooks(context) {
 
   router.post('/customer', Customer(context));
   router.post('/invoice', Invoice(context));
+  router.post('/paymentMethod', PaymentMethod(context));
   router.post('/price', Price(context));
   router.post('/product', Product(context));
   router.post('/subscription', Subscription(context));
@@ -75,6 +76,33 @@ function Invoice(context) {
       res.sendStatus(200);
     } catch (error) {
       console.error(error);
+
+      res.sendStatus(500);
+    }
+  };
+}
+
+module.exports.PaymentMethod = PaymentMethod;
+function PaymentMethod(context) {
+  const schema = Schema(context);
+
+  return async (req, res) => {
+    try {
+      const event = req.body;
+      const paymentMethod = event.data.object;
+      const userId = getUserIdFromMetadata(paymentMethod.metadata);
+      const isDeleted = getIsDeleted(event);
+      const paymentMethodRef = schema.getPaymentMethodRef(userId, paymentMethod.id);
+
+      if (isDeleted) {
+        await paymentMethodRef.delete();
+      } else {
+        await paymentMethodRef.set(paymentMethod);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error('error');
 
       res.sendStatus(500);
     }

@@ -25,6 +25,7 @@ if (!config.stripe) {
       customer: process.env.STRIPE_SIGNING_SECRET_CUSTOMER,
       invoice: process.env.STRIPE_SIGNING_SECRET_INVOICE,
       price: process.env.STRIPE_SIGNING_SECRET_PRICE,
+      payment_method: process.env.STRIPE_SIGNING_SECRET_PAYMENT_METHOD,
       product: process.env.STRIPE_SIGNING_SECRET_PRODUCT,
       subscription: process.env.STRIPE_SIGNING_SECRET_SUBSCRIPTION,
     },
@@ -41,6 +42,7 @@ module.exports = {
     SIGNING_SECRET: {
       CUSTOMER: config.stripe.signing_secret.customer,
       INVOICE: config.stripe.signing_secret.invoice,
+      PAYMENT_METHOD: config.stripe.signing_secret.payment_method,
       PRICE: config.stripe.signing_secret.price,
       PRODUCT: config.stripe.signing_secret.product,
       SUBSCRIPTION: config.stripe.signing_secret.subscription,

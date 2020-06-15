@@ -32,6 +32,7 @@ function CheckoutForm() {
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: elements.getElement(CardElement),
+        metadata: { userId: currentUser.uid },
       });
 
       setErrorMessage(error);

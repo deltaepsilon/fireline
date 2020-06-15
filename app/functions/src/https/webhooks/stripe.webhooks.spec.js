@@ -6,7 +6,14 @@ jest.mock('stripe', () => () => mockStripe);
 
 const context = require('../../../utilities/dev-context');
 const { v4: uuid } = require('uuid');
-const { Customer, Invoice, Price, Product, Subscription } = require('./stripe.webhooks');
+const {
+  Customer,
+  Invoice,
+  PaymentMethod,
+  Price,
+  Product,
+  Subscription,
+} = require('./stripe.webhooks');
 
 describe('StripeWebhooks', () => {
   describe('/customer', () => {
@@ -121,6 +128,58 @@ describe('StripeWebhooks', () => {
       });
 
       it('should set the invoice', () => {
+        expect(setFn).toHaveBeenCalledWith(event.data.object);
+      });
+
+      it('should return a 200', () => {
+        expect(sendStatusFn).toHaveBeenCalledWith(200);
+      });
+    });
+  });
+
+  describe('/paymentMethod', () => {
+    let event;
+    let userId;
+    let paymentMethodRef;
+    let deleteFn;
+    let setFn;
+    let sendStatusFn;
+    let func;
+
+    beforeEach(() => {
+      userId = uuid();
+      event = { type: uuid(), data: { object: { id: uuid(), metadata: { userId } } } };
+      deleteFn = jest.fn();
+      setFn = jest.fn();
+      sendStatusFn = jest.fn();
+      paymentMethodRef = { delete: deleteFn, set: setFn };
+      mockSchema = { getPaymentMethodRef: jest.fn(() => paymentMethodRef) };
+
+      func = PaymentMethod(context);
+    });
+
+    describe('deleted', () => {
+      beforeEach(async () => {
+        event.type = 'paymentMethod.deleted';
+
+        await func({ body: event }, { sendStatus: sendStatusFn });
+      });
+
+      it('should delete the paymentMethod', () => {
+        expect(deleteFn).toHaveBeenCalled();
+      });
+    });
+
+    describe('NOT deleted', () => {
+      beforeEach(async () => {
+        await func({ body: event }, { sendStatus: sendStatusFn });
+      });
+
+      it('should call getPaymentMethodRef', async () => {
+        expect(mockSchema.getPaymentMethodRef).toHaveBeenCalledWith(userId, event.data.object.id);
+      });
+
+      it('should set the paymentMethod', () => {
         expect(setFn).toHaveBeenCalledWith(event.data.object);
       });
 
