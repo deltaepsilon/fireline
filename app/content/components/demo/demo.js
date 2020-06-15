@@ -2,6 +2,7 @@ import './demo.css';
 
 import AuthenticationDetails from './authentication-details';
 import CardForm from './card-form';
+import Invoices from './invoices';
 import PaymentMethods from './payment-methods';
 import React from 'react';
 import Subscriptions from './subscriptions';
@@ -21,6 +22,8 @@ export default function Demo() {
           <h3>Subscriptions</h3>
 
           <Subscriptions />
+
+          <Invoices />
 
           <hr />
 

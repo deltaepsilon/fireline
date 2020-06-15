@@ -19,10 +19,12 @@
 #demo table {
   font-size: 0.5em;
   margin: 3em 1em;
+  width: 100%;
 }
 
 #demo table th {
   min-width: 8em;
+  text-align: left;
 }
 
 #demo select {

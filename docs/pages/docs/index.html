@@ -74,43 +74,67 @@
 <p>You'll need to configure Stripe webhooks or your Firestore records will stay synced with Stripe.</p>
 <p>You can send test webhook calls from the Stripe Webhooks dashboard. But note that the <code>subscription.updated</code> and <code>subscription.deleted</code> webhooks won't work unless you first create a subscription with the correct <code>id</code>.</p>
 <p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to configure external DNS, Nginx and Certbot if you want to test against your local dev environment.</p>
+<p>These webhooks should work across API versions, but of course, your mileage may vary. There are many API versions and we can't test them.</p>
 <h4>Required Webhooks</h4>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
 Description: Sync Stripe products with Firestore
+API Version: 2020-03-02
 Event types:</p>
 <ul>
-<li>product.deleted</li>
-<li>product.created</li>
-<li>product.updated</li>
+<li><code>product.deleted</code></li>
+<li><code>product.created</code></li>
+<li><code>product.updated</code></li>
 </ul>
 <p>Cloud Functions signing secret command:
 <code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
 Description: Sync Stripe prices with Firestore
+API Version: 2020-03-02
 Event types:</p>
 <ul>
-<li>price.deleted</li>
-<li>price.created</li>
-<li>price.updated</li>
+<li><code>price.deleted</code></li>
+<li><code>price.created</code></li>
+<li><code>price.updated</code></li>
 </ul>
 <p>Cloud Functions signing secret command:
 <code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
 Description: Sync Stripe subscriptions with Firestore
+API Version: 2020-03-02
 Event types:</p>
 <ul>
-<li>subscription.deleted</li>
-<li>subscription.updated</li>
+<li><code>customer.subscription.deleted</code></li>
+<li><code>customer.subscription.created</code></li>
+<li><code>customer.subscription.updated</code></li>
 </ul>
 <p>Cloud Functions signing secret command:
 <code>firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksubscriptionsigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/invoice
+Description: Sync Stripe invoices with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>invoice.voided</code></li>
+<li><code>invoice.updated</code></li>
+<li><code>invoice.sent</code></li>
+<li><code>invoice.payment_succeeded</code></li>
+<li><code>invoice.payment_failed</code></li>
+<li><code>invoice.payment_action_required</code></li>
+<li><code>invoice.marked_uncollectible</code></li>
+<li><code>invoice.finalized</code></li>
+<li><code>invoice.deleted</code></li>
+<li><code>invoice.created</code></li>
+</ul>
+<p><strong>Note</strong> <code>invoice.upcoming</code> is not included in this Event Types.</p>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.invoice=whsec_yourwebhookinvoicesigningkey</code></p>
 <p><strong>WARNING!</strong></p>
-<p>Subscriptions are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really <code>currentUser.uid</code>)... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
-<p>The <code>subscription.deleted</code> Stripe webhook event can never work, because the webhook doesn't provide us with enough information to correctly nest the subscription under the correct customer. As a result, we create all subscriptions manually and let the webhooks handle <code>subscription.deleted</code> and <code>subscription.updated</code>.</p>
-<p>You'll have a tricky time testing these webhooks using Stripe's test webhook events, because the <code>id</code> of the test event doesn't already exist in Firestore. You can make the tests work by creating a subscription record in Firestore at <code>stripe-customers/some-fake-uid/subscriptions/subscription_00000000000000</code>. You can put any data in there that you want. The webhook test will overwrite it.</p>
+<p>Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really <code>currentUser.uid</code>) when it creates an invoice... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
+<p>We use metadata on Stripe subscription objects to track the <code>userId</code>, but we haven't figured out a way to do this with invoices.</p>
 </div>
     </div>
 
