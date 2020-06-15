@@ -1,0 +1,152 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head profile="http://www.w3.org/2005/10/profile">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Webhooks</title>
+      <link rel="icon" type="image/png" href="/static/images/logos/chrisesplin-logo.png">
+      <link rel="stylesheet" href="https://use.typekit.net/dln5fow.css">
+      <link rel="stylesheet" href="/static/css/base.css"/>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-D18SD6692G"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-D18SD6692G');
+      </script>
+    </head>
+    <body>
+      <header>
+        <a href="/">
+          <h1>Fireline</h1>
+        </a>
+      </header>
+
+      <div id="content">
+      <style>
+        .page {
+          width: 800px;
+          max-width: calc(100vw - 2em);
+        }
+
+        .page p {
+          margin-bottom: 2em;
+        }
+      </style>
+      <div class="page"><h1>Webhooks</h1>
+<p>Configure Stripe webhooks on your <a href="https://dashboard.stripe.com/test/webhooks">webhooks dashboard</a>.</p>
+<p>You'll need to configure Stripe webhooks or your Firestore records will stay synced with Stripe.</p>
+<p>You can send test webhook calls from the Stripe Webhooks dashboard. Note that some webhooks require metadata that Stripe's test calls don't have, so you'll see records in your Firestore database under <code>missing-or-test-user-id</code>.</p>
+<p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to configure external DNS, Nginx and Certbot if you want to test against your local dev environment.</p>
+<p>These webhooks should work across API versions, but of course, your mileage may vary. There are many API versions and we can't test them.</p>
+<h3>Required Webhooks</h3>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/customer
+Description: Sync Stripe customers with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>customer.updated</code></li>
+<li><code>customer.deleted</code></li>
+<li><code>customer.created</code></li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.customer=whsec_yourwebhookcustomersigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/invoice
+Description: Sync Stripe invoices with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>invoice.voided</code></li>
+<li><code>invoice.updated</code></li>
+<li><code>invoice.sent</code></li>
+<li><code>invoice.payment_succeeded</code></li>
+<li><code>invoice.payment_failed</code></li>
+<li><code>invoice.payment_action_required</code></li>
+<li><code>invoice.marked_uncollectible</code></li>
+<li><code>invoice.finalized</code></li>
+<li><code>invoice.deleted</code></li>
+<li><code>invoice.created</code></li>
+</ul>
+<p><strong>Note</strong> <code>invoice.upcoming</code> is not included in this Event Types.</p>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.invoice=whsec_yourwebhookinvoicesigningkey</code></p>
+<p><strong>WARNING!</strong></p>
+<p>Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really <code>currentUser.uid</code>) when it creates an invoice... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
+<p>We use metadata on other Stripe objects to track the <code>userId</code>, but we haven't figured out a way to do this with invoices 🤷</p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/paymentMethod
+Description: Sync Stripe paymentMethods with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>payment_method.updated</code></li>
+<li><code>payment_method.detached</code></li>
+<li><code>payment_method.card_automatically_updated</code></li>
+<li><code>payment_method.attached</code></li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.paymentMethod=whsec_yourwebhookpaymentmethodsigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
+Description: Sync Stripe prices with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>price.deleted</code></li>
+<li><code>price.created</code></li>
+<li><code>price.updated</code></li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
+Description: Sync Stripe products with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>product.deleted</code></li>
+<li><code>product.created</code></li>
+<li><code>product.updated</code></li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey</code></p>
+<hr>
+<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
+Description: Sync Stripe subscriptions with Firestore
+API Version: 2020-03-02
+Event types:</p>
+<ul>
+<li><code>customer.subscription.deleted</code></li>
+<li><code>customer.subscription.created</code></li>
+<li><code>customer.subscription.updated</code></li>
+</ul>
+<p>Cloud Functions signing secret command:
+<code>firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksubscriptionsigningkey</code></p>
+</div>
+    </div>
+
+      <footer>
+        <ul>
+          <li>
+            <a href="https://github.com/deltaepsilon/fireline">Github</a>
+          </li>
+          <li>
+            <a href="/pages/docs">Docs</a>
+          </li>
+          <li>
+            <a href="/pages/webhooks">Webhooks</a>
+          </li>
+          <li>
+            <a href="/pages/demo">Demo</a>
+          </li>
+        </ul>
+      </footer>
+    </body>
+    </html>
+  

@@ -154,7 +154,6 @@
   flex-direction: column;
 
   width: var(--modal-width);
-  height: var(--modal-height);
   max-width: var(--modal-max-width);
   max-height: var(--modal-max-height);
 }
@@ -192,6 +191,14 @@
 
   width: 100%;
   margin-top: 1em;
+}
+
+#modal .buttons button {
+  padding: 0.25em;
+}
+
+#modal .buttons button:not(:last-child) {
+  margin-right: 1em;
 }
 
 #modal .body img {

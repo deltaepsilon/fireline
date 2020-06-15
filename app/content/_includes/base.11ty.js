@@ -40,6 +40,9 @@ module.exports = function Base(params) {
             <a href="/pages/docs">Docs</a>
           </li>
           <li>
+            <a href="/pages/webhooks">Webhooks</a>
+          </li>
+          <li>
             <a href="/pages/demo">Demo</a>
           </li>
         </ul>

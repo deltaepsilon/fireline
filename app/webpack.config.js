@@ -2,6 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
+    index: './content/components/index.js',
     demo: './content/components/demo/index.js',
   },
   output: {

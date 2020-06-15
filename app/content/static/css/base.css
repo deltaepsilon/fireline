@@ -164,6 +164,16 @@ hr {
   margin: 2em 0;
 }
 
+/* Code */
+code {
+  display: inline-block;
+  font-size: 0.75em;
+  border: 1px solid lightsalmon;
+  border-radius: 4px;
+  padding: 0 0.25em;
+  background: lightpink;
+}
+
 /* Header */
 h2,
 h3,

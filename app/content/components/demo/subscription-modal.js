@@ -51,18 +51,19 @@ function SubscriptionModal({ onClose, product, subscription, subscriptions }) {
         paymentMethodId: paymentMethods[0].id,
         subscription: {
           items: [{ price: priceId }],
-          expand: ['latest_invoice.payment_intent'],
         },
       });
 
       alert('subscription saved');
     } catch (error) {
-      alert(error);
+      console.error(error);
+
+      alert('subscription failed!');
     }
 
     onClose();
   }, [customer, functions, onClose, paymentMethods, priceId, setIsProcessing, subscriptions]);
-  const buttonText = subscription ? 'Change subscription' : 'Subscribe';
+  const buttonText = subscription ? 'Change Subscription' : 'Subscribe';
 
   useEffect(() => {
     const isCustomerMissing = getIsCustomerMissing(customer);
