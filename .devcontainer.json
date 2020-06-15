@@ -14,6 +14,7 @@
   "search.exclude": {
     "**/.next": true,
     "**/.firebase": true,
-    "**/out": true
+    "**/out": true,
+    "content/static": true,
   }
 }

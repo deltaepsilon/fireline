@@ -17,7 +17,7 @@ export default function SubscriptionModalWrapper({ showModal, ...props }) {
   );
 }
 
-function SubscriptionModal({ onClose, product, subscription }) {
+function SubscriptionModal({ onClose, product, subscription, subscriptions }) {
   const functions = useFunctions();
   const customer = useStripeCustomer();
   const paymentMethods = useStripePaymentMethods();
@@ -31,26 +31,20 @@ function SubscriptionModal({ onClose, product, subscription }) {
     setIsProcessing(true);
 
     try {
-      await functions.cancelSubscription({
-        subscriptionId: subscription.id,
-      });
+      await functions.cancelSubscription(subscription.id);
 
-      alert('subscription saved');
+      alert('subscription cancelled');
     } catch (error) {
       alert(error);
     }
 
     onClose();
-  }, [functions, onClose, setIsProcessing, subscription]);
+  }, [functions, onClose, setIsProcessing, subscriptions]);
   const handleSubscribe = useCallback(async () => {
     setIsProcessing(true);
 
     try {
-      if (subscription) {
-        await functions.cancelSubscription({
-          subscriptionId: subscription.id,
-        });
-      }
+      await cancelAllSubscriptions({ functions, subscriptions });
 
       await functions.subscribe({
         customerId: customer.id,
@@ -64,7 +58,7 @@ function SubscriptionModal({ onClose, product, subscription }) {
     }
 
     onClose();
-  }, [customer, functions, onClose, paymentMethods, priceId, setIsProcessing, subscription]);
+  }, [customer, functions, onClose, paymentMethods, priceId, setIsProcessing, subscriptions]);
   const buttonText = subscription ? 'Change subscription' : 'Subscribe';
 
   useEffect(() => {
@@ -102,12 +96,10 @@ function SubscriptionModal({ onClose, product, subscription }) {
   }, [customer, isProcessing, paymentMethods, priceId, product]);
 
   useEffect(() => {
-    const [firstPrice] = prices;
+    const firstValidPrice = prices.find((p) => p.id != subscription?.plan.id);
 
-    firstPrice && setPriceId(firstPrice.id);
-  }, [prices, setPriceId]);
-
-  console.log('subscription', subscription);
+    firstValidPrice && setPriceId(firstValidPrice.id);
+  }, [prices, setPriceId, subscription]);
 
   return (
     <div>
@@ -145,4 +137,14 @@ function SubscriptionModal({ onClose, product, subscription }) {
 
 function getIsCustomerMissing(customer) {
   return !customer.__isLoading && !customer.id;
+}
+
+async function cancelAllSubscriptions({ functions, subscriptions }) {
+  return Promise.all(
+    subscriptions.map(async (subscription) => {
+      await functions.cancelSubscription(subscription.id);
+
+      alert(`existing subscription canceled: ${subscription.id}`);
+    })
+  );
 }

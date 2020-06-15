@@ -6,6 +6,9 @@ if (!context.environment.STRIPE.SK) {
 }
 
 // HTTPS on-call
+const CancelSubscription = require('./src/https/on-call/cancel-subscription.on-call.js');
+exports.cancelSubscription = functions.https.onCall(CancelSubscription(context));
+
 const CreateCustomer = require('./src/https/on-call/create-customer.on-call.js');
 exports.createCustomer = functions.https.onCall(CreateCustomer(context));
 

@@ -1,5 +1,6 @@
 const stripeConstructor = require('stripe');
 const Schema = require('../../utilities/schema');
+const CancelSubscription = require('./cancel-subscription');
 const CreateCustomer = require('./create-customer');
 const RemovePaymentMethod = require('./remove-payment-method');
 const SavePaymentMethod = require('./save-payment-method');
@@ -13,6 +14,7 @@ module.exports = function Stripe(context) {
 
   return {
     stripe,
+    cancelSubscription: CancelSubscription({ schema, stripe }),
     createCustomer: CreateCustomer({ schema, stripe }),
     removePaymentMethod: RemovePaymentMethod({ schema }),
     savePaymentMethod: SavePaymentMethod({ schema }),

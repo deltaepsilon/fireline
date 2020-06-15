@@ -29,8 +29,6 @@ function SubscriptionSelector() {
   );
   const onClose = useCallback(() => setProduct(null), [setProduct]);
 
-  console.log('subscriptions', subscriptions);
-
   return (
     <div>
       <ul id="subscriptions">
@@ -48,6 +46,7 @@ function SubscriptionSelector() {
         showModal={!!product}
         product={product}
         subscription={subscription}
+        subscriptions={subscriptions}
         onClose={onClose}
       />
     </div>

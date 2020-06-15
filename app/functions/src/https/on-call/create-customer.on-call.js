@@ -9,7 +9,7 @@ module.exports = function createCustomer(context) {
     }
 
     if (!email) {
-      throw new Error('email missing invalid');
+      throw new Error('email missing');
     }
 
     try {
