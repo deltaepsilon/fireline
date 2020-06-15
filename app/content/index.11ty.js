@@ -1,5 +1,3 @@
-const products = require('./_data/products');
-
 module.exports = class Index {
   data() {
     return {

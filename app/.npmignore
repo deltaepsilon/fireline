@@ -65,10 +65,19 @@ node_modules/
 .env
 
 # Additions
-content
+content/_includes
+content/components
+content/pages
+content/static/css
+content/static/images
+content/static/images
+content/static/scripts/demo.js
+content/.eleventy.js
+content/index.11ty.js
 docs
 environments
 functions/node_modules
+functions/utilities/dev-context.js
 functions/serve-https.js
 functions/service-account.json
 node_modules
