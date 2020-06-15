@@ -13,9 +13,9 @@ module.exports = function removePaymentMethod(context) {
 
       return stripeService.removePaymentMethod({ paymentMethodId, userId });
     } catch (error) {
-      console.error(JSON.stringify({ auth, paymentMethodId }));
+      console.info(JSON.stringify({ auth, paymentMethodId }));
 
-      throw error;
+      return { error };
     }
   };
 };

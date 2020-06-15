@@ -4,7 +4,6 @@ import useStripeCustomerInvoices from '~/hooks/use-stripe-customer-invoices';
 export default function Invoices() {
   const invoices = useStripeCustomerInvoices();
 
-  console.log('invoices', invoices);
   return (
     <div>
       <h3>Invoices</h3>

@@ -25,9 +25,9 @@ module.exports = function subscribe(context) {
 
       return stripeService.subscribe({ customerId, paymentMethodId, subscription, userId });
     } catch (error) {
-      console.error(JSON.stringify({ auth, customerId, paymentMethodId, subscription }));
+      console.info(JSON.stringify({ auth, customerId, paymentMethodId, subscription }));
 
-      throw error;
+      return { error };
     }
   };
 };

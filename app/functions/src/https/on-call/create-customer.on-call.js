@@ -17,9 +17,9 @@ module.exports = function createCustomer(context) {
 
       return stripeService.createCustomer({ customer, userId });
     } catch (error) {
-      console.error(JSON.stringify({ auth, email }));
+      console.info(JSON.stringify({ auth, email }));
 
-      throw error;
+      return { error };
     }
   };
 };

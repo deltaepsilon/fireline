@@ -17,9 +17,9 @@ module.exports = function cancelSubscription(context) {
 
       return stripeService.cancelSubscription({ subscriptionId, userId });
     } catch (error) {
-      console.error(JSON.stringify({ auth, subscriptionId }));
+      console.info(JSON.stringify({ auth, subscriptionId }));
 
-      throw error;
+      return { error };
     }
   };
 };

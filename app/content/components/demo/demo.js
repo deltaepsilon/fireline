@@ -81,13 +81,19 @@ function StripeTestCardsTable() {
             <td>4000000000000069</td>
             <td>Any 3 digits</td>
             <td>Any future date</td>
-            <td>Charge is declined with an expired_card code</td>
+            <td>Charge is declined with an `expired_card` code</td>
           </tr>
           <tr>
             <td>4000000000000127</td>
             <td>Any 3 digits</td>
             <td>Any future date</td>
-            <td>Charge is declined with an incorrect_cvc code.</td>
+            <td>Charge is declined with an `incorrect_cvc` code.</td>
+          </tr>
+          <tr>
+            <td>4000000000009979</td>
+            <td>Any 3 digits</td>
+            <td>Any future date</td>
+            <td>Charge is declined with a `stolen_card` code.</td>
           </tr>
         </tbody>
       </table>

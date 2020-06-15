@@ -13,9 +13,9 @@ module.exports = function savePaymentMethod(context) {
 
       return stripeService.savePaymentMethod({ paymentMethod, userId });
     } catch (error) {
-      console.error(JSON.stringify({ auth, paymentMethod }));
+      console.info(JSON.stringify({ auth, paymentMethod }));
 
-      throw error;
+      return { error };
     }
   };
 };
