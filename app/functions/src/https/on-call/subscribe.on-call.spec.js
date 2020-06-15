@@ -69,6 +69,7 @@ describe('Subscribe', () => {
       customer: customerId,
       items: [{ price: priceId }],
       expand: ['latest_invoice.payment_intent'],
+      metadata: { userId: auth.uid },
     });
   });
 

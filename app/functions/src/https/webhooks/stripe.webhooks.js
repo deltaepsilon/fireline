@@ -3,6 +3,8 @@ const router = express.Router();
 const Schema = require('../../../utilities/schema');
 const StripeService = require('../../../services/stripe');
 
+const TEST_USER_ID = 'missing-or-test-user-id';
+
 module.exports = function StripeWebhooks(context) {
   const stripeService = StripeService(context);
 
@@ -12,12 +14,44 @@ module.exports = function StripeWebhooks(context) {
     res.send('health check');
   });
 
+  router.post('/invoice', Invoice(context));
   router.post('/price', Price(context));
   router.post('/product', Product(context));
   router.post('/subscription', Subscription(context));
 
   return router;
 };
+
+module.exports.Invoice = Invoice;
+function Invoice(context) {
+  const schema = Schema(context);
+
+  return async (req, res) => {
+    try {
+      const event = req.body;
+      const invoice = event.data.object;
+      const isDeleted = getIsDeleted(event);
+      const subscriptionDoc = await findSubscriptionDoc({
+        schema,
+        subscriptionId: invoice.subscription,
+      });
+      const userId = getUserIdFromPath(subscriptionDoc && subscriptionDoc.ref);
+      const invoiceRef = schema.getCustomerInvoiceRef(userId, invoice.id);
+
+      if (isDeleted) {
+        await invoiceRef.delete();
+      } else {
+        await invoiceRef.set(invoice);
+      }
+
+      res.sendStatus(200);
+    } catch (error) {
+      console.error(error);
+
+      res.sendStatus(500);
+    }
+  };
+}
 
 module.exports.Price = Price;
 function Price(context) {
@@ -79,11 +113,9 @@ function Subscription(context) {
     try {
       const event = req.body;
       const subscription = event.data.object;
+      const userId = subscription.metadata.userId || TEST_USER_ID;
       const isDeleted = getIsDeleted(event);
-      const subscriptionsRef = schema.getSubscriptionsRef();
-      const subscriptionsSnapshot = await subscriptionsRef.where('id', '==', subscription.id).get();
-      const [doc] = subscriptionsSnapshot.docs;
-      const customerSubscriptionRef = doc.ref;
+      const customerSubscriptionRef = schema.getCustomerSubscriptionRef(userId, subscription.id);
 
       if (isDeleted) {
         await customerSubscriptionRef.delete();
@@ -102,4 +134,24 @@ function Subscription(context) {
 
 function getIsDeleted(event) {
   return event.type.split('.').pop() == 'deleted';
+}
+
+function getUserIdFromPath(ref) {
+  let result = TEST_USER_ID;
+
+  if (ref) {
+    const [, userId] = ref.path.split('/');
+
+    result = userId;
+  }
+
+  return result;
+}
+
+async function findSubscriptionDoc({ schema, subscriptionId }) {
+  const subscriptionsRef = schema.getSubscriptionsRef();
+  const subscriptionsSnapshot = await subscriptionsRef.where('id', '==', subscriptionId).get();
+  const [doc] = subscriptionsSnapshot.docs;
+
+  return doc;
 }

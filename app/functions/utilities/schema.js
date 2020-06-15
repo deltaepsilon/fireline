@@ -13,6 +13,10 @@ function createSchema({ db, rtdb }) {
     rtdb,
     getCustomersRef: () => db.collection('stripe-customers'),
     getCustomerRef: (userId) => db.collection('stripe-customers').doc(userId),
+    getCustomerInvoicesRef: (userId) =>
+      db.collection('stripe-customers').doc(userId).collection('invoices'),
+    getCustomerInvoiceRef: (userId, subscriptionId) =>
+      db.collection('stripe-customers').doc(userId).collection('invoices').doc(subscriptionId),
     getCustomerSubscriptionsRef: (userId) =>
       db.collection('stripe-customers').doc(userId).collection('subscriptions'),
     getCustomerSubscriptionRef: (userId, subscriptionId) =>

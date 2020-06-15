@@ -10,6 +10,7 @@ module.exports = function subscribe({ schema, stripe }) {
       customer: customerId,
       items: [{ price: priceId }],
       expand: ['latest_invoice.payment_intent'],
+      metadata: { userId },
     });
     const customerRef = schema.getCustomerRef(userId);
     const customerSubscriptionRef = schema.getCustomerSubscriptionRef(userId, subscription.id);

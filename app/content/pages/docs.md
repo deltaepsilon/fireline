@@ -41,17 +41,20 @@ You can send test webhook calls from the Stripe Webhooks dashboard. But note tha
 
 You can also serve your webhooks locally using `yarn serve:https`. Note that you'll need to configure external DNS, Nginx and Certbot if you want to test against your local dev environment.
 
+These webhooks should work across API versions, but of course, your mileage may vary. There are many API versions and we can't test them.
+
 #### Required Webhooks
 
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
 Description: Sync Stripe products with Firestore
+API Version: 2020-03-02
 Event types:
 
-- product.deleted
-- product.created
-- product.updated
+- `product.deleted`
+- `product.created`
+- `product.updated`
 
 Cloud Functions signing secret command:
 `firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey`
@@ -60,11 +63,12 @@ Cloud Functions signing secret command:
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
 Description: Sync Stripe prices with Firestore
+API Version: 2020-03-02
 Event types:
 
-- price.deleted
-- price.created
-- price.updated
+- `price.deleted`
+- `price.created`
+- `price.updated`
 
 Cloud Functions signing secret command:
 `firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey`
@@ -73,18 +77,41 @@ Cloud Functions signing secret command:
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
 Description: Sync Stripe subscriptions with Firestore
+API Version: 2020-03-02
 Event types:
 
-- subscription.deleted
-- subscription.updated
+- `customer.subscription.deleted`
+- `customer.subscription.created`
+- `customer.subscription.updated`
 
 Cloud Functions signing secret command:
 `firebase functions:config:set stripe.signing_secret.subscription=whsec_yourwebhooksubscriptionsigningkey`
 
+---
+
+URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/invoice
+Description: Sync Stripe invoices with Firestore
+API Version: 2020-03-02
+Event types:
+
+- `invoice.voided`
+- `invoice.updated`
+- `invoice.sent`
+- `invoice.payment_succeeded`
+- `invoice.payment_failed`
+- `invoice.payment_action_required`
+- `invoice.marked_uncollectible`
+- `invoice.finalized`
+- `invoice.deleted`
+- `invoice.created`
+
+**Note** `invoice.upcoming` is not included in this Event Types.
+
+Cloud Functions signing secret command:
+`firebase functions:config:set stripe.signing_secret.invoice=whsec_yourwebhookinvoicesigningkey`
+
 **WARNING!**
 
-Subscriptions are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really `currentUser.uid`)... so we have to use a [collection group query](https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query) to find the record to update or delete.
+Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really `currentUser.uid`) when it creates an invoice... so we have to use a [collection group query](https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query) to find the record to update or delete.
 
-The `subscription.deleted` Stripe webhook event can never work, because the webhook doesn't provide us with enough information to correctly nest the subscription under the correct customer. As a result, we create all subscriptions manually and let the webhooks handle `subscription.deleted` and `subscription.updated`.
-
-You'll have a tricky time testing these webhooks using Stripe's test webhook events, because the `id` of the test event doesn't already exist in Firestore. You can make the tests work by creating a subscription record in Firestore at `stripe-customers/some-fake-uid/subscriptions/subscription_00000000000000`. You can put any data in there that you want. The webhook test will overwrite it.
+We use metadata on Stripe subscription objects to track the `userId`, but we haven't figured out a way to do this with invoices.
