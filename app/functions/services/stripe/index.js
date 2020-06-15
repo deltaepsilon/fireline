@@ -15,10 +15,10 @@ module.exports = function Stripe(context) {
   return {
     stripe,
     cancelSubscription: CancelSubscription({ schema, stripe }),
-    createCustomer: CreateCustomer({ schema, stripe }),
+    createCustomer: CreateCustomer({ stripe }),
     removePaymentMethod: RemovePaymentMethod({ schema }),
     savePaymentMethod: SavePaymentMethod({ schema }),
-    subscribe: Subscribe({ schema, stripe }),
+    subscribe: Subscribe({ stripe }),
     validateWebhook: ValidateWebhook({ environment, stripe }),
   };
 };

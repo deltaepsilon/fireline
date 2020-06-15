@@ -12,8 +12,8 @@ describe('Subscribe', () => {
   let auth;
   let customerId;
   let paymentMethodId;
-  let priceId;
   let subscription;
+  let stripeSubscription;
   let customersUpdateFn;
   let paymentMethodsAttachFn;
   let updateFn;
@@ -23,10 +23,10 @@ describe('Subscribe', () => {
     auth = { uid: uuid() };
     customerId = uuid();
     paymentMethodId = uuid();
-    priceId = uuid();
-    subscription = { id: uuid() };
+    subscription = { priceId: uuid() };
+    stripeSubscription = { id: uuid() };
     customersUpdateFn = jest.fn();
-    subscriptionsCreateFn = jest.fn(() => subscription);
+    subscriptionsCreateFn = jest.fn(() => stripeSubscription);
     paymentMethodsAttachFn = jest.fn();
     updateFn = jest.fn();
     mockSchema = {
@@ -40,7 +40,7 @@ describe('Subscribe', () => {
 
     func = Func(context);
 
-    await func({ customerId, paymentMethodId, priceId }, { auth });
+    await func({ customerId, paymentMethodId, subscription }, { auth });
   });
 
   it('should attach payment method', () => {
@@ -53,11 +53,7 @@ describe('Subscribe', () => {
     });
   });
 
-  it('should call getCustomerRef with userId', async () => {
-    expect(mockSchema.getCustomerRef).toHaveBeenCalledWith(auth.uid);
-  });
-
-  it('should update the customerRef', () => {
-    expect(updateFn).toHaveBeenCalledWith({ subscriptionId: subscription.id });
+  it('should call stripe.subscriptions.create', () => {
+    expect(subscriptionsCreateFn).toHaveBeenCalledWith({ customer: customerId, ...subscription });
   });
 });

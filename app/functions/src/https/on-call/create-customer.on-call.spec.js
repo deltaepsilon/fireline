@@ -10,37 +10,27 @@ const Func = require('./create-customer.on-call');
 
 describe('CreateCustomer', () => {
   let auth;
-  let email;
   let customer;
-  let customerRef;
+  let stripeCustomer;
   let createFn;
-  let setFn;
   let func;
 
   beforeEach(async () => {
     auth = { uid: uuid() };
-    email = uuid();
-    customer = uuid();
-    createFn = jest.fn(() => customer);
-    setFn = jest.fn();
-    customerRef = { set: setFn };
-    mockSchema = { getCustomerRef: jest.fn(() => customerRef) };
+    customer = { email: uuid() };
+    stripeCustomer = uuid();
+    createFn = jest.fn(() => stripeCustomer);
     mockStripe = { customers: { create: createFn } };
 
     func = Func(context);
 
-    await func(email, { auth });
-  });
-
-  it('should call getCustomerRef with userId', async () => {
-    expect(mockSchema.getCustomerRef).toHaveBeenCalledWith(auth.uid);
+    await func(customer, { auth });
   });
 
   it('should create the Stripe customer', () => {
-    expect(mockStripe.customers.create).toHaveBeenCalledWith({ email });
-  });
-
-  it('should set the customer', () => {
-    expect(setFn).toHaveBeenCalledWith(customer);
+    expect(mockStripe.customers.create).toHaveBeenCalledWith({
+      email: customer.email,
+      metadata: { userId: auth.uid },
+    });
   });
 });

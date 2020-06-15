@@ -49,7 +49,10 @@ function SubscriptionModal({ onClose, product, subscription, subscriptions }) {
       await functions.subscribe({
         customerId: customer.id,
         paymentMethodId: paymentMethods[0].id,
-        priceId: priceId,
+        subscription: {
+          items: [{ price: priceId }],
+          expand: ['latest_invoice.payment_intent'],
+        },
       });
 
       alert('subscription saved');
@@ -69,7 +72,7 @@ function SubscriptionModal({ onClose, product, subscription, subscriptions }) {
         setIsProcessing(true);
 
         try {
-          await functions.createCustomer(currentUser.email);
+          await functions.createCustomer({ email: currentUser.email });
 
           setIsProcessing(false);
         } catch (error) {

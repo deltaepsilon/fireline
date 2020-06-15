@@ -1,8 +1,11 @@
-module.exports = function createCustomer({ schema, stripe }) {
-  return async ({ email, userId }) => {
-    const customer = await stripe.customers.create({ email, metadata: { userId } });
-    const customerRef = schema.getCustomerRef(userId);
+module.exports = function createCustomer({ stripe }) {
+  return async ({ customer, userId }) => {
+    if (!customer.metadata) {
+      customer.metadata = {};
+    }
 
-    return customerRef.set(customer);
+    customer.metadata.userId = userId;
+
+    return stripe.customers.create(customer);
   };
 };
