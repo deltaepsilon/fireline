@@ -13,12 +13,7 @@ module.exports = function subscribe({ schema, stripe }) {
       metadata: { userId },
     });
     const customerRef = schema.getCustomerRef(userId);
-    const customerSubscriptionRef = schema.getCustomerSubscriptionRef(userId, subscription.id);
-    const batch = schema.db.batch();
 
-    batch.update(customerRef, { subscriptionId: subscription.id });
-    batch.set(customerSubscriptionRef, subscription);
-
-    return batch.commit();
+    return customerRef.update({ subscriptionId: subscription.id });
   };
 };

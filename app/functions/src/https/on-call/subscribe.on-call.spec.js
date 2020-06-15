@@ -14,13 +14,8 @@ describe('Subscribe', () => {
   let paymentMethodId;
   let priceId;
   let subscription;
-  let customerRef;
-  let customerSubscriptionRef;
   let customersUpdateFn;
   let paymentMethodsAttachFn;
-  let subscriptionsCreateFn;
-  let commitFn;
-  let setFn;
   let updateFn;
   let func;
 
@@ -33,15 +28,9 @@ describe('Subscribe', () => {
     customersUpdateFn = jest.fn();
     subscriptionsCreateFn = jest.fn(() => subscription);
     paymentMethodsAttachFn = jest.fn();
-    commitFn = jest.fn();
-    setFn = jest.fn();
     updateFn = jest.fn();
-    customerRef = uuid();
-    customerSubscriptionRef = uuid();
     mockSchema = {
-      getCustomerRef: jest.fn(() => customerRef),
-      getCustomerSubscriptionRef: jest.fn(() => customerSubscriptionRef),
-      db: { batch: () => ({ commit: commitFn, update: updateFn, set: setFn }) },
+      getCustomerRef: jest.fn(() => ({ update: updateFn })),
     };
     mockStripe = {
       customers: { update: customersUpdateFn },
@@ -64,32 +53,11 @@ describe('Subscribe', () => {
     });
   });
 
-  it('should create the subscription', () => {
-    expect(subscriptionsCreateFn).toHaveBeenCalledWith({
-      customer: customerId,
-      items: [{ price: priceId }],
-      expand: ['latest_invoice.payment_intent'],
-      metadata: { userId: auth.uid },
-    });
-  });
-
   it('should call getCustomerRef with userId', async () => {
     expect(mockSchema.getCustomerRef).toHaveBeenCalledWith(auth.uid);
   });
 
-  it('should call getCustomerSubscriptionRef with userId and subscriptionId', async () => {
-    expect(mockSchema.getCustomerSubscriptionRef).toHaveBeenCalledWith(auth.uid, subscription.id);
-  });
-
   it('should update the customerRef', () => {
-    expect(updateFn).toHaveBeenCalledWith(customerRef, { subscriptionId: subscription.id });
-  });
-
-  it('should set the customerSubscriptionRef', () => {
-    expect(setFn).toHaveBeenCalledWith(customerSubscriptionRef, subscription);
-  });
-
-  it('should commit the batch', () => {
-    expect(commitFn).toHaveBeenCalled();
+    expect(updateFn).toHaveBeenCalledWith({ subscriptionId: subscription.id });
   });
 });
