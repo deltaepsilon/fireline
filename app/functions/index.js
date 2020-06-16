@@ -1,9 +1,18 @@
 const functions = require('firebase-functions');
-const context = require('./utilities/prod-context');
+const isDev = process.env.NODE_ENV == 'development';
+const context = isDev ? require('./utilities/dev-context') : require('./utilities/prod-context');
+
+if (isDev) {
+  console.info('functions installing with dev-context');
+}
 
 if (!context.environment.STRIPE.SK) {
   throw 'Firebase config missing. Example: firebase functions:config:set stripe.sk=sk_test_yourprivatekey';
 }
+
+exports.context = context;
+exports.schema = require('./utilities/schema');
+exports.createSchema = exports.schema.createSchema;
 
 // HTTPS on-call
 const CancelSubscription = require('./src/https/on-call/cancel-subscription.on-call.js');

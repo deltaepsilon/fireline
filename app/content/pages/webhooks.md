@@ -38,16 +38,16 @@ Description: Sync Stripe invoices with Firestore
 API Version: 2020-03-02
 Event types:
 
-- `invoice.voided`
-- `invoice.updated`
-- `invoice.sent`
-- `invoice.payment_succeeded`
-- `invoice.payment_failed`
-- `invoice.payment_action_required`
-- `invoice.marked_uncollectible`
-- `invoice.finalized`
-- `invoice.deleted`
 - `invoice.created`
+- `invoice.deleted`
+- `invoice.finalized`
+- `invoice.marked_uncollectible`
+- `invoice.payment_action_required`
+- `invoice.payment_failed`
+- `invoice.payment_succeeded`
+- `invoice.sent`
+- `invoice.updated`
+- `invoice.voided`
 
 **Note** `invoice.upcoming` is not included in this Event Types.
 

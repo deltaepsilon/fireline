@@ -1,5 +1,6 @@
 module.exports = function validateWebhook({ environment, stripe }) {
   const secretsMap = {
+    customer: environment.STRIPE.SIGNING_SECRET.CUSTOMER,
     invoice: environment.STRIPE.SIGNING_SECRET.INVOICE,
     paymentMethod: environment.STRIPE.SIGNING_SECRET.paymentMethod,
     price: environment.STRIPE.SIGNING_SECRET.PRICE,

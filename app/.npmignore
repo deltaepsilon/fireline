@@ -75,7 +75,7 @@ content/static/scripts/demo.js
 content/.eleventy.js
 content/index.11ty.js
 docs
-environments
+environments/app-env.*
 functions/node_modules
 functions/utilities/dev-context.js
 functions/serve-https.js

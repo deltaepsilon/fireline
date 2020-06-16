@@ -6,24 +6,28 @@
   "author": "Chris Esplin <chris@christopheresplin.com>",
   "license": "MIT",
   "private": false,
-  "dependencies": {
+  "devDependencies": {
     "@11ty/eleventy": "^0.11.0",
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.10.1",
-    "@stripe/react-stripe-js": "^1.1.2",
-    "@stripe/stripe-js": "^1.7.0",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.5.3",
     "firebase-tools": "^8.4.2",
     "front-matter": "^4.0.2",
     "lit-html": "^1.2.1",
+    "nodemon": "^2.0.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "regenerator-runtime": "^0.13.5",
+    "@stripe/react-stripe-js": "^1.1.2",
+    "@stripe/stripe-js": "^1.7.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "stripe": "^8.62.0"
   },
   "scripts": {
     "build": "cd content && yarn webpack && eleventy",
@@ -36,7 +40,7 @@
     "deploy": "firebase deploy --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "deploy:firestore": "firebase deploy --only firestore --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "deploy:functions": "firebase deploy --only functions --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
-    "deploy:functions:config": "firebase functions:config:set stripe.sk=$STRIPE_SK stripe.signing_secret.price=$STRIPE_SIGNING_SECRET_PRICE stripe.signing_secret.product=$STRIPE_SIGNING_SECRET_PRODUCT stripe.signing_secret.subscription=$STRIPE_SIGNING_SECRET_SUBSCRIPTION --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
+    "deploy:functions:config": "sh bin/firebase-config.sh",
     "deploy:hosting": "firebase deploy --only hosting --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT",
     "serve:hosting": "firebase serve --only hosting --port 4000 --host 0.0.0.0",
     "serve:https": "nodemon functions/serve-https",
@@ -46,8 +50,5 @@
     "webpack": "webpack --config webpack.config.js --mode production",
     "webpack:watch": "yarn webpack --watch",
     "_": ""
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.4"
   }
 }
