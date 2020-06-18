@@ -1,0 +1,139 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head profile="http://www.w3.org/2005/10/profile">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Client</title>
+      <link rel="icon" type="image/png" href="/static/images/logos/chrisesplin-logo.png">
+      <link rel="stylesheet" href="https://use.typekit.net/dln5fow.css">
+      <link rel="stylesheet" href="/static/css/base.css"/>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-D18SD6692G"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-D18SD6692G');
+      </script>
+
+      <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    </head>
+    <body>
+      <header>
+        <a href="/">
+          <h1>Fireline</h1>
+        </a>
+      </header>
+
+      <div id="content">
+      <style>
+        .page {
+          width: 800px;
+          max-width: calc(100vw - 2em);
+        }
+
+        .page p {
+          margin-bottom: 2em;
+        }
+      </style>
+      <div class="page"><h3>Callable Cloud Functions</h3>
+<p>These Cloud Functions are architected to be a thin wrapper over top of Stripe's Node.js SDK. They authenticate with Firebase Authentication and attach <code>{ metadata: { userId: auth.uid }}</code> to many of the Stripe objects.</p>
+<p>You'll need the <a href="/pages/webhooks">webhooks</a> to make this work, because these functions use unidirectional data flow wherever possible. This means that they make updates to Stripe and Stripe webhooks update your Firestore database.</p>
+<hr>
+<p><strong>cancelSubscription</strong></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L34">subscription-modal.js</a></p>
+<p>Signature: <code>firebase.functions().httpsCallable('cancelSubscription')(subscriptionId)</code></p>
+<p>Example:</p>
+<pre><code class="language-javascript">function clientCancelSubscription(subscription) {
+  const cancelSubscription = firebase.functions().httpsCallable('cancelSubscription')
+
+  await cancelSubscription(subscription.id);
+}
+</code></pre>
+<hr>
+<p><strong>createCustomer</strong></p>
+<p><code>createCustomer</code> passes through it's <code>customer</code> argument directly to Stripe's Node.js SDK. See <a href="https://stripe.com/docs/api/customers/create">stripe.customers.create()</a></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L75">subscription-modal.js</a></p>
+<p>Signature: <code>firebase.functions().httpsCallable('createCustomer')(customer)</code></p>
+<p>Example:</p>
+<pre><code class="language-javascript">function clientCreateCustomer(currentUser) {
+  const createCustomer = firebase.functions().httpsCallable('createCustomer')
+
+  await createCustomer({ email: currentUser.email, metadata: { some: 'metadata' } });
+}
+</code></pre>
+<hr>
+<p><strong>removePaymentMethod</strong></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/payment-methods.js#L19">payment-methods.js</a></p>
+<p>Signature: <code>firebase.functions().httpsCallable('removePaymentMethod')(paymentMethodId)</code></p>
+<p>Example:</p>
+<pre><code class="language-javascript">function clientRemovePaymentMethod(paymentMethod) {
+  const removePaymentMethod = firebase.functions().httpsCallable('removePaymentMethod')
+
+  await removePaymentMethod(paymentMethod.id);
+}
+</code></pre>
+<hr>
+<p><strong>savePaymentMethod</strong></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/card-form.js#L40">card-form.js</a></p>
+<p><code>savePaymentMethod</code> passes through it's <code>paymentMethod</code> argument straight to your Firestore database.</p>
+<p>Signature: <code>firebase.functions().httpsCallable('savePaymentMethod')(paymentMethod)</code></p>
+<p>Example:</p>
+<pre><code class="language-javascript">function clientSavePaymentMethod(paymentMethod) {
+  const savePaymentMethod = firebase.functions().httpsCallable('savePaymentMethod')
+
+  await savePaymentMethod(paymentMethod);
+}
+</code></pre>
+<hr>
+<p><strong>subscribe</strong></p>
+<p><code>subscribe</code> passes through it's <code>subscription</code> argument directly to Stripe's Node.js SDK. See <a href="https://stripe.com/docs/api/subscriptions/create">stripe.subscriptions.create()</a></p>
+<p>See <a href="https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L49">subscription-modal.js</a></p>
+<p>Signature: <code>firebase.functions().httpsCallable('subscribe')({ customerId, paymentMethodId, subscription })</code></p>
+<p>Example:</p>
+<pre><code class="language-javascript">function clientSubscribe({ customer, paymentMethod, priceId }) {
+  const subscribe = firebase.functions().httpsCallable('subscribe')
+
+  await subscribe({
+    customerId: customer.id,
+    paymentMethodId: paymentMethod.id,
+    subscription: {
+      items: [{ price: priceId }],
+    },
+  });
+}
+</code></pre>
+</div>
+    </div>
+
+      <footer>
+        <ul>
+          <li>
+            <a href="https://github.com/deltaepsilon/fireline">Github</a>
+          </li>
+          <li>
+            <a href="/pages/docs">Docs</a>
+          </li>
+          <li>
+            <a href="/pages/webhooks">Webhooks</a>
+          </li>
+          <li>
+            <a href="/pages/callable-functions">Callable Functions</a>
+          </li>
+          <li>
+            <a href="/pages/react-hooks">React Hooks</a>
+          </li>
+          <li>
+            <a href="/pages/demo">Demo</a>
+          </li>
+        </ul>
+      </footer>
+
+      <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+	    <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    </body>
+    </html>
+  

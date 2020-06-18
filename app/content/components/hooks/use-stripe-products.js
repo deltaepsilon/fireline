@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import flattenSnapshot from '~/utilities/flatten-snapshot';
+import flattenSnapshot from '../utilities/flatten-snapshot';
 import useSchema from './use-schema';
 
 const DEFAULT_PRODUCTS = Object.assign([], { __isLoading: true });

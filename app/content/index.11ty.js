@@ -21,17 +21,26 @@ module.exports = class Index {
         Fireline is the cheapest, easiest way to integrate Stripe with your SaaS app. Merchants of Record like Chargebee and Paddle are expensive overkill for fledgling businesses. Fireline is the cheap, easy integration that will get your MVP shipped with self-service payments!
       </p>
 
-      <h3>Links</h3>
+      <h3>Quickstart</h3>
       
       <ul>
         <li>
-          <a href="https://github.com/deltaepsilon/fireline">GitHub</a>
+          <a href="/pages/demo">Interactive Demo</a>
         </li>
         <li>
           <a href="/pages/docs">Docs</a>
         </li>
         <li>
-          <a href="/pages/demo">Interactive Demo</a>
+          <a href="/pages/webhooks">Webhooks</a>
+        </li>
+        <li>
+          <a href="/pages/callable-functions">Callable Functions</a>
+        </li>
+        <li>
+          <a href="/pages/react-hooks">React Hooks</a>
+        </li>
+        <li>
+          <a href="https://github.com/deltaepsilon/fireline">GitHub</a>
         </li>
       </ul>
 
@@ -50,7 +59,13 @@ module.exports = class Index {
         Fireline stores the results of your Stripe subscriptions in Firestore.
       </p>
       <p>
-        Firestore makes your client-side code easy as pie. Your client app subscribes to the user's <strong>/stripe-users/{userId}</strong> document for realtime updates to their subscription.
+        Firestore makes your client-side code easy as pie. Your client app subscribes to the user's <strong>/stripe-customers/{userId}</strong> document for realtime updates to their subscription.
+      </p>
+
+      <h3>Optional React Hooks</h3>
+
+      <p>
+        Fireline has a bunch of ready-made <a href="/pages/react-hooks">React hooks</a> to make your client-side integration a bit easier.
       </p>
     `;
   }

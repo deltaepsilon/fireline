@@ -1,5 +1,5 @@
-import devEnv from '~/../../environments/app-env.dev';
-import prodEnv from '~/../../environments/app-env.prod';
+import devEnv from '../../../environments/app-env.dev';
+import prodEnv from '../../../environments/app-env.prod';
 import { useMemo } from 'react';
 
 export default function useEnvironment() {

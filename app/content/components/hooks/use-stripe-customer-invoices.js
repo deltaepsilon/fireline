@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import flattenSnapshot from '~/utilities/flatten-snapshot';
+import flattenSnapshot from '../utilities/flatten-snapshot';
 import useAuth from './use-auth';
 import useSchema from './use-schema';
 

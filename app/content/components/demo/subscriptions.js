@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import SubscriptionModal from './subscription-modal';
+import constants from '~/constants';
 import useAuth from '~/hooks/use-auth';
 import useStripeCustomerSubscriptions from '~/hooks/use-stripe-customer-subscriptions';
 import useStripeProducts from '~/hooks/use-stripe-products';
@@ -16,7 +17,8 @@ export default function Subscriptions() {
 }
 
 function SubscriptionSelector() {
-  const products = useStripeProducts();
+  const allProducts = useStripeProducts();
+  const products = useMemo(() => allProducts.filter((p) => constants.STRIPE.PRODUCT_IDS.has(p.id)));
   const subscriptions = useStripeCustomerSubscriptions();
   const [product, setProduct] = useState(null);
   const [subscription, setSubscription] = useState(null);

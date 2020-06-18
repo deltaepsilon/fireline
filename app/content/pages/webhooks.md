@@ -15,14 +15,32 @@ You can also serve your webhooks locally using `yarn serve:https`. Note that you
 
 These webhooks should work across API versions, but of course, your mileage may vary. There are many API versions and we can't test them.
 
-### Required Webhooks
+### Cloud Functions config
+
+```bash
+# /bin/firebase-config.sh
+#! bin/sh
+echo "Exporting firebase functions config..."
+
+npx firebase functions:config:set \
+  stripe.sk=$STRIPE_SK \
+  stripe.signing_secret.customer=$STRIPE_SIGNING_SECRET_CUSTOMER \
+  stripe.signing_secret.invoice=$STRIPE_SIGNING_SECRET_INVOICE \
+  stripe.signing_secret.price=$STRIPE_SIGNING_SECRET_PRICE \
+  stripe.signing_secret.payment_method=$STRIPE_SIGNING_SECRET_PAYMENT_METHOD \
+  stripe.signing_secret.product=$STRIPE_SIGNING_SECRET_PRODUCT \
+  stripe.signing_secret.subscription=$STRIPE_SIGNING_SECRET_SUBSCRIPTION \
+   --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT
+```
 
 ---
 
-URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/customer
-Description: Sync Stripe customers with Firestore
-API Version: 2020-03-02
-Event types:
+# Required Webhooks
+
+URL: `https://your-project-name.cloudfunctions.net/webhooks/stripe/customer`
+<br/>Description: Sync Stripe customers with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `customer.updated`
 - `customer.deleted`
@@ -34,9 +52,9 @@ Cloud Functions signing secret command:
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/invoice
-Description: Sync Stripe invoices with Firestore
-API Version: 2020-03-02
-Event types:
+<br/>Description: Sync Stripe invoices with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `invoice.created`
 - `invoice.deleted`
@@ -56,16 +74,18 @@ Cloud Functions signing secret command:
 
 **WARNING!**
 
-Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really `currentUser.uid`) when it creates an invoice... so we have to use a [collection group query](https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query) to find the record to update or delete.
+Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (`currentUser.uid`) when it creates an invoice... so we have to use a [collection group query](https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query) to find the record to update or delete.
+
+Make sure to set your [Firestore indexes](https://github.com/deltaepsilon/fireline/blob/master/app/firestore.indexes.json) and include `subscriptions`!!!
 
 We use metadata on other Stripe objects to track the `userId`, but we haven't figured out a way to do this with invoices 🤷
 
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/paymentMethod
-Description: Sync Stripe paymentMethods with Firestore
-API Version: 2020-03-02
-Event types:
+<br/>Description: Sync Stripe paymentMethods with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `payment_method.updated`
 - `payment_method.detached`
@@ -78,9 +98,9 @@ Cloud Functions signing secret command:
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
-Description: Sync Stripe prices with Firestore
-API Version: 2020-03-02
-Event types:
+<br/>Description: Sync Stripe prices with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `price.deleted`
 - `price.created`
@@ -92,9 +112,9 @@ Cloud Functions signing secret command:
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
-Description: Sync Stripe products with Firestore
-API Version: 2020-03-02
-Event types:
+<br/>Description: Sync Stripe products with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `product.deleted`
 - `product.created`
@@ -106,9 +126,9 @@ Cloud Functions signing secret command:
 ---
 
 URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
-Description: Sync Stripe subscriptions with Firestore
-API Version: 2020-03-02
-Event types:
+<br/>Description: Sync Stripe subscriptions with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:
 
 - `customer.subscription.deleted`
 - `customer.subscription.created`

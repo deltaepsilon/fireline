@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import flattenDoc from '~/utilities/flatten-doc';
+import flattenDoc from '../utilities/flatten-doc';
 import useAuth from './use-auth';
 import useSchema from './use-schema';
 

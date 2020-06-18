@@ -18,6 +18,8 @@
 
         gtag('config', 'G-D18SD6692G');
       </script>
+
+      <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css" rel="stylesheet" />
     </head>
     <body>
       <header>
@@ -43,12 +45,27 @@
 <p>You can send test webhook calls from the Stripe Webhooks dashboard. Note that some webhooks require metadata that Stripe's test calls don't have, so you'll see records in your Firestore database under <code>missing-or-test-user-id</code>.</p>
 <p>You can also serve your webhooks locally using <code>yarn serve:https</code>. Note that you'll need to configure external DNS, Nginx and Certbot if you want to test against your local dev environment.</p>
 <p>These webhooks should work across API versions, but of course, your mileage may vary. There are many API versions and we can't test them.</p>
-<h3>Required Webhooks</h3>
+<h3>Cloud Functions config</h3>
+<pre><code class="language-bash"># /bin/firebase-config.sh
+#! bin/sh
+echo &quot;Exporting firebase functions config...&quot;
+
+npx firebase functions:config:set \
+  stripe.sk=$STRIPE_SK \
+  stripe.signing_secret.customer=$STRIPE_SIGNING_SECRET_CUSTOMER \
+  stripe.signing_secret.invoice=$STRIPE_SIGNING_SECRET_INVOICE \
+  stripe.signing_secret.price=$STRIPE_SIGNING_SECRET_PRICE \
+  stripe.signing_secret.payment_method=$STRIPE_SIGNING_SECRET_PAYMENT_METHOD \
+  stripe.signing_secret.product=$STRIPE_SIGNING_SECRET_PRODUCT \
+  stripe.signing_secret.subscription=$STRIPE_SIGNING_SECRET_SUBSCRIPTION \
+   --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT
+</code></pre>
 <hr>
-<p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/customer
-Description: Sync Stripe customers with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<h1>Required Webhooks</h1>
+<p>URL: <code>https://your-project-name.cloudfunctions.net/webhooks/stripe/customer</code>
+<br/>Description: Sync Stripe customers with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
 <li><code>customer.updated</code></li>
 <li><code>customer.deleted</code></li>
@@ -58,32 +75,33 @@ Event types:</p>
 <code>firebase functions:config:set stripe.signing_secret.customer=whsec_yourwebhookcustomersigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/invoice
-Description: Sync Stripe invoices with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<br/>Description: Sync Stripe invoices with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
-<li><code>invoice.voided</code></li>
-<li><code>invoice.updated</code></li>
-<li><code>invoice.sent</code></li>
-<li><code>invoice.payment_succeeded</code></li>
-<li><code>invoice.payment_failed</code></li>
-<li><code>invoice.payment_action_required</code></li>
-<li><code>invoice.marked_uncollectible</code></li>
-<li><code>invoice.finalized</code></li>
-<li><code>invoice.deleted</code></li>
 <li><code>invoice.created</code></li>
+<li><code>invoice.deleted</code></li>
+<li><code>invoice.finalized</code></li>
+<li><code>invoice.marked_uncollectible</code></li>
+<li><code>invoice.payment_action_required</code></li>
+<li><code>invoice.payment_failed</code></li>
+<li><code>invoice.payment_succeeded</code></li>
+<li><code>invoice.sent</code></li>
+<li><code>invoice.updated</code></li>
+<li><code>invoice.voided</code></li>
 </ul>
 <p><strong>Note</strong> <code>invoice.upcoming</code> is not included in this Event Types.</p>
 <p>Cloud Functions signing secret command:
 <code>firebase functions:config:set stripe.signing_secret.invoice=whsec_yourwebhookinvoicesigningkey</code></p>
 <p><strong>WARNING!</strong></p>
-<p>Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (which are really <code>currentUser.uid</code>) when it creates an invoice... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
+<p>Invoices are nested under customers in the Firestore database, but Stripe doesn't know about our customer IDs (<code>currentUser.uid</code>) when it creates an invoice... so we have to use a <a href="https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query">collection group query</a> to find the record to update or delete.</p>
+<p>Make sure to set your <a href="https://github.com/deltaepsilon/fireline/blob/master/app/firestore.indexes.json">Firestore indexes</a> and include <code>subscriptions</code>!!!</p>
 <p>We use metadata on other Stripe objects to track the <code>userId</code>, but we haven't figured out a way to do this with invoices 🤷</p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/paymentMethod
-Description: Sync Stripe paymentMethods with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<br/>Description: Sync Stripe paymentMethods with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
 <li><code>payment_method.updated</code></li>
 <li><code>payment_method.detached</code></li>
@@ -94,9 +112,9 @@ Event types:</p>
 <code>firebase functions:config:set stripe.signing_secret.paymentMethod=whsec_yourwebhookpaymentmethodsigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/price
-Description: Sync Stripe prices with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<br/>Description: Sync Stripe prices with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
 <li><code>price.deleted</code></li>
 <li><code>price.created</code></li>
@@ -106,9 +124,9 @@ Event types:</p>
 <code>firebase functions:config:set stripe.signing_secret.price=whsec_yourwebhookpricesigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/product
-Description: Sync Stripe products with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<br/>Description: Sync Stripe products with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
 <li><code>product.deleted</code></li>
 <li><code>product.created</code></li>
@@ -118,9 +136,9 @@ Event types:</p>
 <code>firebase functions:config:set stripe.signing_secret.product=whsec_yourwebhookproductsigningkey</code></p>
 <hr>
 <p>URL: https://your-project-name.cloudfunctions.net/webhooks/stripe/subscription
-Description: Sync Stripe subscriptions with Firestore
-API Version: 2020-03-02
-Event types:</p>
+<br/>Description: Sync Stripe subscriptions with Firestore
+<br/>API Version: 2020-03-02
+<br/>Event types:</p>
 <ul>
 <li><code>customer.subscription.deleted</code></li>
 <li><code>customer.subscription.created</code></li>
@@ -143,10 +161,19 @@ Event types:</p>
             <a href="/pages/webhooks">Webhooks</a>
           </li>
           <li>
+            <a href="/pages/callable-functions">Callable Functions</a>
+          </li>
+          <li>
+            <a href="/pages/react-hooks">React Hooks</a>
+          </li>
+          <li>
             <a href="/pages/demo">Demo</a>
           </li>
         </ul>
       </footer>
+
+      <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+	    <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
     </body>
     </html>
   

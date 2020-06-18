@@ -1,3 +1,4 @@
+import { createSchema } from '../../functions/utilities/schema';
 import flattenDoc from './utilities/flatten-doc';
 import flattenSnapshot from './utilities/flatten-snapshot';
 import useAuth from './hooks/use-auth';
@@ -11,7 +12,6 @@ import useStripePaymentMethods from './hooks/use-stripe-payment-methods';
 import useStripeProductPrices from './hooks/use-stripe-product-prices';
 import useStripeProducts from './hooks/use-stripe-products';
 import useStripePromise from './hooks/use-stripe-promise';
-import { createSchema } from '../../functions/utilities/schema';
 
 export {
   createSchema,

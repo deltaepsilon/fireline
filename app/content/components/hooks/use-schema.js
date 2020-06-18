@@ -7,8 +7,7 @@ export default function useSchema() {
 
   return useMemo(() => {
     const db = firebase.firestore();
-    const rtdb = firebase.database();
 
-    return createSchema({ db, rtdb });
+    return createSchema({ db });
   }, [firebase]);
 }

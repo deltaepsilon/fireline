@@ -21,6 +21,8 @@ module.exports = function Base(params) {
 
         gtag('config', 'G-D18SD6692G');
       </script>
+
+      <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css" rel="stylesheet" />
     </head>
     <body>
       <header>
@@ -43,10 +45,19 @@ module.exports = function Base(params) {
             <a href="/pages/webhooks">Webhooks</a>
           </li>
           <li>
+            <a href="/pages/callable-functions">Callable Functions</a>
+          </li>
+          <li>
+            <a href="/pages/react-hooks">React Hooks</a>
+          </li>
+          <li>
             <a href="/pages/demo">Demo</a>
           </li>
         </ul>
       </footer>
+
+      <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+	    <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
     </body>
     </html>
   `;

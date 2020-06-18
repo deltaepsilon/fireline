@@ -1,0 +1,188 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head profile="http://www.w3.org/2005/10/profile">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Hooks</title>
+      <link rel="icon" type="image/png" href="/static/images/logos/chrisesplin-logo.png">
+      <link rel="stylesheet" href="https://use.typekit.net/dln5fow.css">
+      <link rel="stylesheet" href="/static/css/base.css"/>
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-D18SD6692G"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-D18SD6692G');
+      </script>
+
+      <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css" rel="stylesheet" />
+    </head>
+    <body>
+      <header>
+        <a href="/">
+          <h1>Fireline</h1>
+        </a>
+      </header>
+
+      <div id="content">
+      <style>
+        .page {
+          width: 800px;
+          max-width: calc(100vw - 2em);
+        }
+
+        .page p {
+          margin-bottom: 2em;
+        }
+      </style>
+      <div class="page"><h3>React Hooks</h3>
+<p>Most use cases will require the same basic React hooks. We developed these hooks for the <a href="/pages/demo">demo</a> and exported them for client-side use from <code>@quiver/fireline</code>.</p>
+<p>Install with <code>npm install @quiver/fireline</code>.</p>
+<p>See the source code on <a href="https://github.com/deltaepsilon/fireline/tree/master/app/content/components/hooks">GitHub</a>.</p>
+<h3>Set Stripe PK and import</h3>
+<p>The easiest way to set the Stripe public key (PK) is to make sure to run <code>window.stripePk = 'pk_live_your_public_key'</code> in your client code. It's easiest if you put it in the <code>&lt;head&gt;&lt;/head&gt;</code> tag in your <code>index.html</code>.</p>
+<p>For server-side rendering in Node you should set <code>STRIPE_PK</code> in your environment variables.</p>
+<h1>Examples</h1>
+<pre><code class="language-javascript">// Node.js server-side render
+process.env.STRIPE_PK = 'pk_live_your_public_key';
+</code></pre>
+<pre><code class="language-html">&lt;!-- index.html --&gt;
+&lt;script&gt;
+  window.stripePk = 'pk_live_your_public_key';
+&lt;/script&gt;
+</code></pre>
+<pre><code class="language-javascript">// React Component
+import {
+  useAuth,
+  useFunctions,
+  useSchema,
+  useStripeCustomerInvoices,
+  useStripeCustomerInvoice,
+  useStripeCustomerSubscriptions,
+  useStripeCustomer,
+  useStripePaymentMethods,
+  useStripeProductPrices,
+  useStripeProducts,
+  useStripePromise,
+} from '@quiver/fireline';
+
+function LogAllOfTheStripeThings() {
+  const { currentUser, signInWithGoogle, signOut } = useAuth();
+  const functions = useFunctions();
+  const schema = useSchema();
+  const customerInvoices = useStripeCustomerInvoices();
+  const customerSubscriptions = useStripeCustomerSubscriptions();
+  const customer = useStripeCustomer();
+  const paymentMethods = useStripePaymentMethods();
+  const productPrices = useStripeProductPrices();
+  const products = useStripeProducts();
+  const stripePromise = useStripePromise();
+
+  console.log({
+    functions,
+    schema,
+    customerInvoices,
+    customerSubscriptions,
+    customer,
+    paymentMethods,
+    productPrices,
+    products,
+    stripePromise,
+  });
+
+  return null;
+}
+</code></pre>
+<hr>
+<h3>Example: <a href="https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/card-form.js">card-form.js</a></h3>
+<pre><code class="language-javascript">import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import React, { useCallback, useState } from 'react';
+import { useAuth, useFunctions, useStripePromise } from '@quiver/fireline';
+
+export default function CheckoutWrapper() {
+  const stripePromise = useStripePromise();
+
+  return (
+    &lt;Elements stripe={stripePromise}&gt;
+      &lt;CheckoutForm /&gt;
+    &lt;/Elements&gt;
+  );
+}
+
+function CheckoutForm() {
+  const stripe = useStripe();
+  const elements = useElements();
+  const functions = useFunctions();
+  const { currentUser } = useAuth();
+  const [saving, setSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = useCallback(
+    async (e) =&gt; {
+      e.preventDefault();
+
+      setSaving(true);
+
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: elements.getElement(CardElement),
+        metadata: { userId: currentUser.uid },
+      });
+
+      setErrorMessage(error);
+
+      paymentMethod &amp;&amp; (await functions.savePaymentMethod(paymentMethod));
+
+      setSaving(false);
+    },
+    [currentUser, functions, setErrorMessage, setSaving, stripe]
+  );
+
+  return (
+    &lt;form onSubmit={handleSubmit} disabled={!currentUser}&gt;
+      &lt;CardElement /&gt;
+      &lt;div className=&quot;row&quot;&gt;
+        &lt;button type=&quot;submit&quot; disabled={!stripe || saving}&gt;
+          Add payment method
+        &lt;/button&gt;
+        &lt;aside&gt;{errorMessage}&lt;/aside&gt;
+      &lt;/div&gt;
+    &lt;/form&gt;
+  );
+}
+</code></pre>
+</div>
+    </div>
+
+      <footer>
+        <ul>
+          <li>
+            <a href="https://github.com/deltaepsilon/fireline">Github</a>
+          </li>
+          <li>
+            <a href="/pages/docs">Docs</a>
+          </li>
+          <li>
+            <a href="/pages/webhooks">Webhooks</a>
+          </li>
+          <li>
+            <a href="/pages/callable-functions">Callable Functions</a>
+          </li>
+          <li>
+            <a href="/pages/react-hooks">React Hooks</a>
+          </li>
+          <li>
+            <a href="/pages/demo">Demo</a>
+          </li>
+        </ul>
+      </footer>
+
+      <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.min.js"></script>
+	    <script src="https://unpkg.com/prismjs@1.20.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    </body>
+    </html>
+  

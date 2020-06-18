@@ -15,10 +15,12 @@ module.exports = class Demo {
       <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-app.js"></script>
       <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-analytics.js"></script>
       <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-auth.js"></script>
-      <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-database.js"></script>
       <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-firestore.js"></script>
       <script src="${WEB_ROOT}/__/firebase/${SDK}/firebase-functions.js"></script>
       <script src="${WEB_ROOT}/__/firebase/init.js"></script>
+      <script>
+        window.stripePk = 'pk_test_yKJ7iI8CjZqH0I7HzkiEPpET';
+      </script>
       <script src="/static/scripts/demo.js"></script>
     `;
   }

@@ -5,7 +5,11 @@ layout: page
 
 # DOCS
 
-These docs are a work-in-progress. Complain in the [GitHub issues](https://github.com/deltaepsilon/fireline/issues) if something is missing or the guides are unclear.
+Read these docs carefully. They're short.
+
+Complain in the [GitHub issues](https://github.com/deltaepsilon/fireline/issues) if something is missing or the guides are unclear.
+
+---
 
 ## Cloud Functions for Firebase Installation
 
@@ -13,21 +17,94 @@ These docs are a work-in-progress. Complain in the [GitHub issues](https://githu
 
 1. Install Fireline in your `/functions` folder: `cd functions && npm install @quiver/fireline`
 
-1. Import the Fireline functions found in Fireline's `/functions/index.js` file: [index.js](https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js)
+1. Import the Fireline functions found in Fireline's [`/functions/index.js`](https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js) file: [/functions/index.js](https://github.com/deltaepsilon/fireline/blob/master/app/functions/index.js)
 
-1. Export Fireline's `index.js` functions in your own project's `/functions/index.js` file.
+1. Export Fireline's `index.js` functions in your own project's `/functions/index.js` file. Feel free to rename them to suit your app. Just make sure to also change how they're called from your client code.
 
-1. Set your Stripe secret key value in the Cloud Functions Config:
+```javascript
+// /functions/index.js
+const functions = require('firebase-functions');
+const {
+  cancelSubscription,
+  createCustomer,
+  savePaymentMethod,
+  subscribe,
+  webhooks,
+} = require('@quiver/fireline');
 
-> `firebase functions:config:set stripe.sk=sk_test_yoursecretkey`
+// Fireline
+exports.cancelSubscription = cancelSubscription;
+exports.createCustomer = createCustomer;
+exports.savePaymentMethod = savePaymentMethod;
+exports.removePaymentMethod = PaymentMethod;
+exports.subscribe = subscribe;
+exports.webhooks = webhooks;
+```
+
+5. Set your Stripe environment variablesCloud Functions config:
+
+```bash
+# /bin/firebase-config.sh
+#! bin/sh
+echo "Exporting firebase functions config..."
+
+npx firebase functions:config:set \
+  stripe.sk=$STRIPE_SK \
+  stripe.signing_secret.customer=$STRIPE_SIGNING_SECRET_CUSTOMER \
+  stripe.signing_secret.invoice=$STRIPE_SIGNING_SECRET_INVOICE \
+  stripe.signing_secret.price=$STRIPE_SIGNING_SECRET_PRICE \
+  stripe.signing_secret.payment_method=$STRIPE_SIGNING_SECRET_PAYMENT_METHOD \
+  stripe.signing_secret.product=$STRIPE_SIGNING_SECRET_PRODUCT \
+  stripe.signing_secret.subscription=$STRIPE_SIGNING_SECRET_SUBSCRIPTION \
+   --token $FIREBASE_TOKEN --project=$FIREBASE_PROJECT
+```
+
+6. Deploy your functions with `npx firebase deploy` or `npx firebase deploy --only functions`.
+
+---
 
 ### Client App Installation
 
-1. Include the Firebase client SDKs in your client app: [web setup docs](https://firebase.google.com/docs/web/setup)
+1. Include the Firebase client SDKs in your client app: [web setup docs](https://firebase.google.com/docs/web/setup) You'll need the `app`, `auth`, `firestore` and `functions` modules at a minimum.
 
-1. See the demo code for a React implementation: [demo code](https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js)
+1. Install with `npm install @quiver/fireline`.
 
-1. If you'd like to use Fireline's React hooks, run `npm install @quiver/fireline` and check out it's exports: [/content/components/index.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/index.js). These hooks are a bit too messy to document right now, so open them up and see what they do. It's kind of straightforward? You likely have similar logic in your existing React app.
+1. See the [callable functions docs](/pages/callable-functions)
+
+1. If you're integrating with React, check out the [React hooks docs](/pages/react-hooks).
+
+1. Optionally check out the demo code for a React-specific implementation: [demo code](https://github.com/deltaepsilon/fireline/blob/master/app/content/components/demo/demo.js)
+
+`@quiver/fireline` has exports for `createSchema`, `flattenDoc` and `flattenSnapshot`. Fireline uses them internally and we've found them to be super useful... so they're yours!
+
+- [schema.js](https://github.com/deltaepsilon/fireline/blob/master/app/functions/utilities/schema.js)
+- [flatten-doc.js](https://github.com/deltaepsilon/fireline/blob/master/app/content/components/utilities/flatten-doc.js)
+- [flatten-snapshot.js](https://github.com/deltaepsilon/fireline/blob/master/app/content/components/utilities/flatten-snapshot.js)
+
+```javascript
+async function getCustomer() {
+  const schema = createSchema({ db: firebase.firestore() });
+  const currentUser = firebase.auth().currentUser;
+  const customerRef = schema.getCustomerRef(currentUser.uid);
+  const customerDoc = await customerRef.get();
+  const customer = flattenDoc(customerDoc);
+
+  return customer;
+}
+```
+
+```javascript
+async function getProducts() {
+  const schema = createSchema({ db: firebase.firestore() });
+  const productsRef = schema.getProductsRef();
+  const productsSnapshot = await productsRef.get();
+  const products = flattenSnapshot(productsSnapshot);
+
+  return products;
+}
+```
+
+---
 
 ### Security Rules
 
@@ -35,122 +112,48 @@ You'll need security rules for your `stripe-customers` collection.
 
 See [app/firestore.rules](https://github.com/deltaepsilon/fireline/blob/master/app/firestore.rules)
 
-### Client-Side Implementation
+---
 
-See [the demo code](https://github.com/deltaepsilon/fireline/tree/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo) to see an example of one implementation of subscriptions.
+### Firestore Indexes
 
-Each client-side implementation is going to be a bit different. Feel free to copy/paste the demo files into your own project, but recognize that you'll need to make sure that it matches your desired business logic.
+You'll need to add a `collectionGroup` index in Firestore for `subscriptions`
 
-### Webhooks
+See [firestore.indexes.json](https://github.com/deltaepsilon/fireline/blob/master/app/firestore.indexes.json)
+
+```json
+{
+  "indexes": [],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "subscriptions",
+      "fieldPath": "id",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "arrayConfig": "CONTAINS",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### Stripe Webhooks
 
 Make sure to install all [required webhooks]('/pages/webhooks') on your [Stripe webhooks dashboard](https://dashboard.stripe.com/test/webhooks).
 
 This integration uses Stripe as its source of truth and attempts to get data from webhooks wherever possible.
-
-### Callable Cloud Functions
-
-These Cloud Functions are architected to be a thin wrapper over top of Stripe's Node.js SDK. They authenticate with Firebase Authentication and attach `{ metadata: { userId: auth.uid }}` to many of the Stripe objects.
-
-You'll need the [webhooks](/pages/webhooks) to make this work, because these functions use unidirectional data flow wherever possible. This means that they make updates to Stripe and Stripe webhooks update your Firestore database.
-
----
-
-**cancelSubscription**
-
-See [subscription-modal.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L34)
-
-Signature: `firebase.functions().httpsCallable('cancelSubscription')(subscriptionId)`
-
-Example:
-
-```javascript
-function clientCancelSubscription(subscription) {
-  const cancelSubscription = firebase.functions().httpsCallable('cancelSubscription')
-
-  await cancelSubscription(subscription.id);
-}
-```
-
----
-
-**createCustomer**
-
-`createCustomer` passes through it's `customer` argument directly to Stripe's Node.js SDK. See [stripe.customers.create()](https://stripe.com/docs/api/customers/create)
-
-See [subscription-modal.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L75)
-
-Signature: `firebase.functions().httpsCallable('createCustomer')(customer)`
-
-Example:
-
-```javascript
-function clientCreateCustomer(currentUser) {
-  const createCustomer = firebase.functions().httpsCallable('createCustomer')
-
-  await createCustomer({ email: currentUser.email, metadata: { some: 'metadata' } });
-}
-```
-
----
-
-**removePaymentMethod**
-
-See [payment-methods.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/payment-methods.js#L19)
-
-Signature: `firebase.functions().httpsCallable('removePaymentMethod')(paymentMethodId)`
-
-Example:
-
-```javascript
-function clientRemovePaymentMethod(paymentMethod) {
-  const removePaymentMethod = firebase.functions().httpsCallable('removePaymentMethod')
-
-  await removePaymentMethod(paymentMethod.id);
-}
-```
-
----
-
-**savePaymentMethod**
-
-See [card-form.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/card-form.js#L40)
-
-`savePaymentMethod` passes through it's `paymentMethod` argument straight to your Firestore database.
-
-Signature: `firebase.functions().httpsCallable('savePaymentMethod')(paymentMethod)`
-
-Example:
-
-```javascript
-function clientSavePaymentMethod(paymentMethod) {
-  const savePaymentMethod = firebase.functions().httpsCallable('savePaymentMethod')
-
-  await savePaymentMethod(paymentMethod);
-}
-```
-
----
-
-**subscribe**
-
-`subscribe` passes through it's `subscription` argument directly to Stripe's Node.js SDK. See [stripe.subscriptions.create()](https://stripe.com/docs/api/subscriptions/create)
-
-See [subscription-modal.js](https://github.com/deltaepsilon/fireline/blob/b329e6273b6c989b9f7b906901cff4cf66b76e4e/app/content/components/demo/subscription-modal.js#L49)
-
-Signature: `firebase.functions().httpsCallable('subscribe')({ customerId, paymentMethodId, subscription })`
-
-Example:
-
-```javascript
-function clientSubscribe({ customer, paymentMethod, priceId }) {
-  const subscribe = firebase.functions().httpsCallable('subscribe')
-
-  await subscribe({
-    customerId: customer.id,
-    paymentMethodId: paymentMethod.id,
-    subscription: {
-      items: [{ price: priceId }],
-    },
-  });
-}
-```

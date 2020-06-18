@@ -1,14 +1,6 @@
 const path = require('path');
 
-module.exports = {
-  entry: {
-    index: './content/components/index.js',
-    demo: './content/components/demo/index.js',
-  },
-  output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'content/static/scripts'),
-  },
+const sharedConfig = {
   module: {
     rules: [
       {
@@ -30,3 +22,36 @@ module.exports = {
     },
   },
 };
+
+const externalConfig = {
+  entry: {
+    index: './content/components/index.js',
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'cjs'),
+    libraryTarget: 'commonjs2',
+  },
+  externals: { react: 'react', 'react-dom': 'reactDOM' },
+};
+
+const demoConfig = {
+  entry: {
+    demo: './content/components/demo/index.js',
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'content/static/scripts'),
+  },
+};
+
+module.exports = [
+  {
+    ...externalConfig,
+    ...sharedConfig,
+  },
+  {
+    ...demoConfig,
+    ...sharedConfig,
+  },
+];

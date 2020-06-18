@@ -11,7 +11,7 @@ Front-end environments
 
 Firebase Functions environments
 
-1. Edit `app/functions/environments/functions-env.test.js`
+1. See `app/functions/environments/functions-env.js`
 
 ## Make sure to base64 encode your service-account.json file
 
@@ -19,9 +19,20 @@ See [Export secret file to Gitlab pipeline](https://medium.com/@michalkalita/exp
 
 ## Set the environment variables in your CI/CD environment
 
-- FIREBASE_TOKEN, obtained by running `yarn ci:login` from inside the `dev` container.
-- FIREBASE_DATABASE_URL
-- SERVICE_ACCOUNT_BASE64
+```
+FIREBASE_DATABASE_URL=https://fireline-2020.firebaseio.com
+FIREBASE_PROJECT=fireline-2020
+FIREBASE_TOKEN=ABCDEFG
+GOOGLE_APPLICATION_CREDENTIALS=/app/functions/service-account.json
+STRIPE_PK=pk_test_ABCDEFG
+STRIPE_SK=sk_test_ABCDEFG
+STRIPE_SIGNING_SECRET_INVOICE=whsec_ABCDEFG
+STRIPE_SIGNING_SECRET_PRICE=whsec_ABCDEFG
+STRIPE_SIGNING_SECRET_PRODUCT=whsec_ABCDEFG
+STRIPE_SIGNING_SECRET_SUBSCRIPTION=whsec_ABCDEFG
+SERVICE_ACCOUNT_BASE64=ABCDEFG
+```
+Note: `FIREBASE_TOKEN` can obtained by running `yarn ci:login` from inside the `dev` container.
 
 Obtain your base64-encoded service account with `cat path/to/service-account.json | base64 -w 0`.
 

@@ -65,17 +65,9 @@ node_modules/
 .env
 
 # Additions
-content/_includes
-content/components
-content/pages
-content/static/css
-content/static/images
-content/static/images
-content/static/scripts/demo.js
-content/.eleventy.js
-content/index.11ty.js
+content
 docs
-environments/app-env.*
+/environments
 functions/node_modules
 functions/utilities/dev-context.js
 functions/serve-https.js
