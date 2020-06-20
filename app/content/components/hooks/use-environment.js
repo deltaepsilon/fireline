@@ -14,6 +14,10 @@ export default function useEnvironment() {
       if (isDev) {
         environment = devEnv;
       }
+
+      if (!environment.STRIPE.PK) {
+        environment.STRIPE.PK = window.stripePk;
+      }
     }
 
     return environment;
