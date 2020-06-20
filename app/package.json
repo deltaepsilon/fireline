@@ -1,8 +1,8 @@
 {
   "name": "@quiver/fireline",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "module": "cjs/index.js",
-  "main": "functions/index.js",
+  "main": "functions/exports.js",
   "author": "Chris Esplin <chris@christopheresplin.com> (https://www.chrisesplin.com/",
   "repository": "https://github.com/deltaepsilon/fireline.git",
   "homepage": "https://fireline.chrisesplin.com/",
