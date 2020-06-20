@@ -10,7 +10,8 @@ module.exports = class React {
     return String.raw`
       <style>
       </style>
-      <div id="react-root">${params.content}</div>
+      <div id="react-root"></div>
+      <div>${params.content}</div>
     `;
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "@quiver/fireline",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "module": "cjs/index.js",
   "main": "functions/exports.js",
   "author": "Chris Esplin <chris@christopheresplin.com> (https://www.chrisesplin.com/",
