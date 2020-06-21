@@ -9,6 +9,7 @@ export default function useStripePromise() {
 
   useEffect(() => {
     (async () => {
+      console.log('loading Stripe environment: ', environment);
       environment && setStripePromise(loadStripe(environment.STRIPE.PK));
     })();
   }, [environment, setStripePromise]);
