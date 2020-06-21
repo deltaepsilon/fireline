@@ -14,12 +14,6 @@ export default function useEnvironment() {
       if (isDev) {
         environment = devEnv;
       }
-
-      console.log('use-environment', { environment, stripePk: window.stripePk });
-      if (!environment.STRIPE.PK) {
-        console.log('window.stripePk', window.stripePk);
-        environment.STRIPE.PK = window.stripePk;
-      }
     }
 
     return environment;
