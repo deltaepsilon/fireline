@@ -20,7 +20,7 @@
     "stripe": "^8.62.0"
   },
   "devDependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "firebase-functions-test": "^0.2.0",
     "jest": "^26.0.1"
   },
